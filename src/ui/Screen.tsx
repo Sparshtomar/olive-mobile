@@ -1,0 +1,67 @@
+import type { ReactNode } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, View, type ScrollViewProps } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors, space } from './theme';
+import { useLayout } from './use-layout';
+
+export interface ScreenProps {
+  children: ReactNode;
+  /** Pull-to-refresh handler. */
+  onRefresh?: () => void;
+  refreshing?: boolean;
+  /** Content pinned below the scroll area (e.g. a save bar). */
+  footer?: ReactNode;
+  maxWidth?: number;
+  scrollProps?: ScrollViewProps;
+  /** Extra bottom space so content clears a floating tab bar. */
+  bottomInset?: number;
+}
+
+/** Scrollable page with safe areas and a readable max width on desktop. */
+export const Screen = ({
+  children,
+  onRefresh,
+  refreshing = false,
+  footer,
+  maxWidth = 1120,
+  scrollProps,
+  bottomInset = 0,
+}: ScreenProps) => {
+  const insets = useSafeAreaInsets();
+  const { isWide } = useLayout();
+  return (
+    <View style={styles.root}>
+      <ScrollView
+        {...scrollProps}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: insets.top + (isWide ? space.xxl : space.md),
+            paddingBottom: (footer ? space.lg : insets.bottom + space.xxl) + bottomInset,
+            paddingHorizontal: isWide ? space.xxxl : space.lg,
+          },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          onRefresh ? (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.primary}
+              colors={[colors.primary]}
+            />
+          ) : undefined
+        }
+      >
+        <View style={[styles.inner, { maxWidth }]}>{children}</View>
+      </ScrollView>
+      {footer}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: colors.bg },
+  content: { flexGrow: 1 },
+  inner: { width: '100%', alignSelf: 'center', gap: space.lg },
+});

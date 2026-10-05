@@ -1,0 +1,88 @@
+{
+  "expo": {
+    "name": "Olive",
+    "slug": "olive",
+    "scheme": "olive",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FBF7F0",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sparshtomar.olive"
+    },
+    "android": {
+      "package": "com.sparshtomar.olive",
+      "adaptiveIcon": {
+        "backgroundColor": "#FBF7F0",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "resize",
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Olive listens when you hold the mic so you can describe your meal out loud.",
+          "recordAudioAndroid": true,
+          "enableBackgroundRecording": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Olive uses the camera to snap your meals and lab reports.",
+          "photosPermission": "Olive reads the photo you pick so it can identify your meal.",
+          "microphonePermission": false
+        }
+      ],
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 120,
+          "backgroundColor": "#FBF7F0"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "enablePngCrunchInReleaseBuilds": true,
+            "enableBundleCompression": true,
+            "buildArchs": ["arm64-v8a"],
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "http://localhost:4010"
+    },
+    "updates": {
+      "enabled": false
+    }
+  }
+}
