@@ -1,0 +1,48 @@
+# Every gate a change must pass. The same commands run locally via `npm run check`.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Format, lint, types, dead code, tests
+    runs-on: ubuntu-latest
+    steps:
+      # Actions are pinned to commit SHAs so a moved tag can't change what runs.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      # Includes the architecture rules: layer boundaries, feature public APIs, no import cycles.
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run knip
+      - run: npm test
+
+  build:
+    name: Android bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Expo SDK dependency versions are aligned
+        run: npx expo install --check
+      # Bundles the exact JavaScript the APK ships, without needing the Android toolchain.
+      - run: npx expo export --platform android --output-dir dist

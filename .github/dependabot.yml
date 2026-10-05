@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Expo pins React Native and expo-* versions per SDK; upgrade those together with `npx expo install --fix`.
+    ignore:
+      - dependency-name: 'expo*'
+      - dependency-name: 'react-native*'
+      - dependency-name: 'react'
+      - dependency-name: 'react-dom'
+    groups:
+      dev-tooling:
+        dependency-type: development
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
