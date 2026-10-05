@@ -1,0 +1,8 @@
+// Dead-code check: unused files, exports and dependencies fail CI instead of piling up.
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // An export used inside its own file is a deliberate unit, not dead code.
+  "ignoreExportsUsedInFile": true,
+  "entry": ["src/app/**/*.tsx"],
+  "project": ["src/**/*.{ts,tsx}", "test/**/*.ts"],
+}
