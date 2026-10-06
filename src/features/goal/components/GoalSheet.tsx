@@ -108,6 +108,7 @@ export const GoalSheet = ({ user, visible, onClose }: { user: User; visible: boo
           <Button
             label={user.isDemo ? 'Exit demo' : 'Start over'}
             variant="ghost"
+            size="lg"
             onPress={() => setConfirmReset(true)}
             fullWidth
           />

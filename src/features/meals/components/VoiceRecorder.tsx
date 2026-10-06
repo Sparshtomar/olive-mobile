@@ -123,7 +123,7 @@ export const VoiceRecorder = ({ onRecorded, onPermissionDenied, onCancel }: Voic
           {error}
         </Text>
       ) : null}
-      <Button label="Back" variant="ghost" onPress={onCancel} disabled={state.isRecording} />
+      <Button label="Back" variant="ghost" size="lg" onPress={onCancel} disabled={state.isRecording} fullWidth />
     </View>
   );
 };
