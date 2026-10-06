@@ -4,20 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { OliveOrb } from '@/features/chat';
 import { LogSheet, useLogSheet } from '@/features/meals';
 import { haptics } from '@/lib/haptics';
-import {
-  Button,
-  Olive,
-  OfflineBanner,
-  PressableScale,
-  Text,
-  makeStyles,
-  radius,
-  space,
-  useLayout,
-  useTheme,
-} from '@/ui';
+import { Button, Olive, OfflineBanner, Text, makeStyles, space, useLayout, useTheme } from '@/ui';
 import { ClipboardList, Plus, Sun } from '@/ui/icons';
-import { BottomTab, SideTab } from '../components/NavTabs';
+import { GlassPill } from '../components/GlassPill';
+import { BottomAction, BottomTab, SideTab } from '../components/NavTabs';
 
 /** The signed-in shell: floating tab bar + log button on phones, sidebar on wide screens. */
 export const TabsLayout = () => {
@@ -73,26 +63,20 @@ export const TabsLayout = () => {
         <View
           style={[styles.bottomWrap, { paddingBottom: Math.max(insets.bottom, space.md), pointerEvents: 'box-none' }]}
         >
-          <View style={styles.bottomBar} accessibilityRole="tablist">
-            <TabTrigger name="today" asChild>
-              <BottomTab icon={Sun} label="Today" />
-            </TabTrigger>
-            <TabTrigger name="ask" asChild>
-              <BottomTab renderIcon={(focused) => <OliveOrb size={26} active={focused} />} label="Ask" />
-            </TabTrigger>
-            <TabTrigger name="reports" asChild>
-              <BottomTab icon={ClipboardList} label="Reports" />
-            </TabTrigger>
-          </View>
-          <PressableScale
-            onPress={openLog}
-            style={styles.fab}
-            scaleTo={0.92}
-            accessibilityRole="button"
-            accessibilityLabel="Log a meal"
-          >
-            <Plus size={28} color={colors.textOnPrimary} strokeWidth={2.6} />
-          </PressableScale>
+          <GlassPill>
+            <View style={styles.bottomItems} accessibilityRole="tablist">
+              <TabTrigger name="today" asChild>
+                <BottomTab icon={Sun} label="Today" />
+              </TabTrigger>
+              <BottomAction label="Log a meal" onPress={openLog} />
+              <TabTrigger name="ask" asChild>
+                <BottomTab renderIcon={(focused) => <OliveOrb size={26} active={focused} />} label="Ask" />
+              </TabTrigger>
+              <TabTrigger name="reports" asChild>
+                <BottomTab icon={ClipboardList} label="Reports" />
+              </TabTrigger>
+            </View>
+          </GlassPill>
         </View>
       ) : null}
 
@@ -101,7 +85,7 @@ export const TabsLayout = () => {
   );
 };
 
-const useStyles = makeStyles(({ colors, shadow }) => ({
+const useStyles = makeStyles(({ colors }) => ({
   slot: { flexShrink: 1, minHeight: 0 },
   sidebar: {
     width: 248,
@@ -113,36 +97,6 @@ const useStyles = makeStyles(({ colors, shadow }) => ({
   },
   brand: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   sideList: { flexDirection: 'column', gap: space.xs },
-  bottomWrap: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space.sm,
-  },
-  bottomBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
-    width: 264,
-    height: 68,
-    paddingHorizontal: space.xs,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...shadow.floating,
-  },
-  fab: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadow.floating,
-  },
+  bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
+  bottomItems: { flexDirection: 'row', alignItems: 'center', padding: space.xs, gap: 2 },
 }));
