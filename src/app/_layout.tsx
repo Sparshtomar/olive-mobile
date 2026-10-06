@@ -79,6 +79,7 @@ export default function RootLayout() {
                 <Stack.Screen name="report/new" options={{ animation: 'slide_from_bottom', gestureEnabled: false }} />
                 <Stack.Screen name="report/[id]" />
                 <Stack.Screen name="marker/[key]" />
+                <Stack.Screen name="chat/[id]" />
               </Stack.Protected>
             </Stack>
             <ToastHost />

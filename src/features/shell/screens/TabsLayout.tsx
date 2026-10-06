@@ -1,6 +1,7 @@
 import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { OliveOrb } from '@/features/chat';
 import { LogSheet, useLogSheet } from '@/features/meals';
 import { haptics } from '@/lib/haptics';
 import {
@@ -36,6 +37,7 @@ export const TabsLayout = () => {
       {/* Registers the routes (must be a direct child of Tabs); the visible buttons live in the bars below. */}
       <TabList style={{ display: 'none' }}>
         <TabTrigger name="today" href="/" />
+        <TabTrigger name="ask" href="/ask" />
         <TabTrigger name="reports" href="/reports" />
       </TabList>
 
@@ -48,6 +50,9 @@ export const TabsLayout = () => {
           <View style={styles.sideList} accessibilityRole="tablist">
             <TabTrigger name="today" asChild>
               <SideTab icon={Sun} label="Today" />
+            </TabTrigger>
+            <TabTrigger name="ask" asChild>
+              <SideTab renderIcon={(focused) => <OliveOrb size={24} active={focused} />} label="Ask Olive" />
             </TabTrigger>
             <TabTrigger name="reports" asChild>
               <SideTab icon={ClipboardList} label="Health reports" />
@@ -71,6 +76,9 @@ export const TabsLayout = () => {
           <View style={styles.bottomBar} accessibilityRole="tablist">
             <TabTrigger name="today" asChild>
               <BottomTab icon={Sun} label="Today" />
+            </TabTrigger>
+            <TabTrigger name="ask" asChild>
+              <BottomTab renderIcon={(focused) => <OliveOrb size={26} active={focused} />} label="Ask" />
             </TabTrigger>
             <TabTrigger name="reports" asChild>
               <BottomTab icon={ClipboardList} label="Reports" />
@@ -105,14 +113,23 @@ const useStyles = makeStyles(({ colors, shadow }) => ({
   },
   brand: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   sideList: { flexDirection: 'column', gap: space.xs },
-  bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
+  bottomWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: space.sm,
+  },
   bottomBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    width: 300,
+    width: 264,
     height: 68,
-    paddingHorizontal: space.sm + 2,
+    paddingHorizontal: space.xs,
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
     borderWidth: 1,
@@ -120,16 +137,12 @@ const useStyles = makeStyles(({ colors, shadow }) => ({
     ...shadow.floating,
   },
   fab: {
-    position: 'absolute',
-    top: -14,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 4,
-    borderColor: colors.bg,
     ...shadow.floating,
   },
 }));

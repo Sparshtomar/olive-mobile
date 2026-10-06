@@ -1,7 +1,8 @@
 import type { DaySummary } from '@sparshtomar/olive-shared';
 import { useState } from 'react';
 import { View } from 'react-native';
-import { useMe, useDay, useInsights, useTrends } from '@/api';
+import { useMe, useDay, useInsights, useMarkers, useTrends } from '@/api';
+import { AskOliveCard } from '@/features/chat';
 import { GoalSheet } from '@/features/goal';
 import { useLogSheet } from '@/features/meals';
 import { describeError } from '@/lib/errors';
@@ -57,6 +58,7 @@ export const TodayScreen = () => {
   const day = useDay(date);
   const trends = useTrends(today);
   const insights = useInsights(today);
+  const markers = useMarkers();
   const showLog = useLogSheet((s) => s.show);
 
   const refresh = () => Promise.all([day.refetch(), trends.refetch(), insights.refetch()]);
@@ -137,6 +139,7 @@ export const TodayScreen = () => {
 
   const side = (
     <>
+      <AskOliveCard markers={markers.data} day={d} />
       <FocusCard focus={d.focus} />
       {trends.data ? <WeekChart trends={trends.data} selected={date} /> : null}
       <InsightCards insights={insights.data} loading={insights.isLoading} />
@@ -159,6 +162,7 @@ export const TodayScreen = () => {
         ) : (
           <>
             {summary}
+            <AskOliveCard markers={markers.data} day={d} />
             <FocusCard focus={d.focus} />
             {meals}
             {trends.data ? <WeekChart trends={trends.data} selected={date} /> : null}
