@@ -28,7 +28,7 @@ Runs on **Android, iOS and the web** (desktop gets a sidebar and dialogs, phones
 
 - **Login**: not the problem being evaluated. The device keeps an anonymous user id; the API has a single `current-user` plugin where real auth would slot in.
 - **Profile screen**: goal editing lives in a sheet on Today; nothing else is a setting worth a screen.
-- **Free-form chatbot**: easy to build, hard to make useful. Voice logging covers "talk to Olive" for the core job.
+- **A chatbot that doesn't know you**: Ask Olive only exists because every answer is grounded in the user's own data; an ungrounded assistant was not worth a tab.
 - **Water / sleep / steps / barcode**: they dilute the food + reports story.
 
 ### Decisions worth calling out
@@ -37,10 +37,11 @@ Runs on **Android, iOS and the web** (desktop gets a sidebar and dialogs, phones
 - **Tracked markers use one reference range per marker** (in canonical units), so a trend across two labs or mg/dL vs mmol/L stays comparable. The lab's printed range is still shown on the report.
 - **Calm, not clinical.** Dark, quiet surfaces with one mint accent; over-target is orange, never red. Being 80 kcal over is information, not failure.
 - **Demo users are created per tap**, not shared, so reviewers never see each other's edits.
+- **First-run hints are data, not screens.** Each screen declares its tour as a list of `{ target, title, body }`; anything on screen can be a target. One component spotlights, paces and remembers. Steps whose target did not render are skipped, so a tour never points at nothing ([ADR 0007](docs/adr/0007-declarative-hints.md)).
 
 ### Edge cases handled
 
-No food in the photo · blurry / unrelated image · empty or too-short voice note · mic / camera permission denied (with _Open Settings_ when it can't be re-asked) · offline (cached data stays readable, logging is disabled with an explanation) · AI rate-limited (automatic model fallback, then a friendly retry) · AI timeout · double-tap / retried save (idempotent `clientId`) · editing and deleting meals (optimistic delete with rollback) · logging for a past day · leaving with unsaved changes (confirm, incl. Android back) · not a lab report · password-protected PDF · file too large · unknown units (kept, not tracked, so a value is never off by 38×) · VLDL/Non-HDL not mistaken for LDL/HDL · future report dates · server forgot the device (falls back to onboarding) · a render crash (friendly screen with retry instead of a blank one).
+No food in the photo · blurry / unrelated image · empty or too-short voice note · mic / camera permission asked in-app first, then the OS prompt, then _Open Settings_ once it can't be re-asked · offline (cached data stays readable, logging is disabled with an explanation) · AI rate-limited (automatic model fallback, then a friendly retry) · AI timeout · double-tap / retried save (idempotent `clientId`) · editing and deleting meals (optimistic delete with rollback) · logging for a past day · leaving with unsaved changes (confirm, incl. Android back) · not a lab report · password-protected PDF · file too large · unknown units (kept, not tracked, so a value is never off by 38×) · VLDL/Non-HDL not mistaken for LDL/HDL · future report dates · server forgot the device (falls back to onboarding) · a render crash (friendly screen with retry instead of a blank one).
 
 ---
 
@@ -51,7 +52,7 @@ No food in the photo · blurry / unrelated image · empty or too-short voice not
 ```
 src/
   app/        routes only: each file re-exports one feature screen
-  features/   onboarding · today · meals · reports · goal · shell
+  features/   onboarding · today · meals · reports · goal · chat · hints · shell
                 index.ts     the feature's public API, the only thing other code imports
                 screens/     route-level components
                 components/  feature-private UI
@@ -122,7 +123,7 @@ npm run check    # everything CI runs: format, lint (incl. architecture rules), 
 npm run e2e      # browser smoke test: the core flows, dark and light, screenshots in e2e/screenshots/
 ```
 
-The unit tests cover the logic behind the review screens (portion steps, calorie override, "leaves X kcal"), onboarding validation, lab-value parsing and error copy, theme contrast, plus the architecture rules. UI components stay thin on top of this logic. `npm run e2e` is the user-like layer: Playwright drives the real web build through onboarding → demo data → typing and saving a meal → goal sheet → reports → a marker → asking Olive, in both colour schemes, against a running API (local with `AI_PROVIDER=mock`, or the deployed one via `API_URL`). It uses your installed Chrome, so there is no browser download ([ADR 0006](docs/adr/0006-browser-smoke-test.md)). The API's integration tests live in [olive-server](https://github.com/Sparshtomar/olive-server#tests).
+The unit tests cover the logic behind the review screens (portion steps, calorie override, "leaves X kcal"), onboarding validation, lab-value parsing and error copy, theme contrast, plus the architecture rules. UI components stay thin on top of this logic. `npm run e2e` is the user-like layer: Playwright drives the real web build through onboarding → demo data → the first-run walkthrough → typing and saving a meal → goal sheet → reports → a marker → asking Olive, in both colour schemes, against a running API (local with `AI_PROVIDER=mock`, or the deployed one via `API_URL`). It uses your installed Chrome, so there is no browser download ([ADR 0006](docs/adr/0006-browser-smoke-test.md)). The API's integration tests live in [olive-server](https://github.com/Sparshtomar/olive-server#tests).
 
 ---
 
