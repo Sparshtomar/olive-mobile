@@ -31,3 +31,6 @@ expo-env.d.ts
 coverage/
 *.log
 .DS_Store
+
+# Browser smoke test output
+e2e/screenshots/
