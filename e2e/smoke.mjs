@@ -137,10 +137,10 @@ async function run(scheme) {
       .waitFor({ timeout: 60_000 });
     await page.getByLabel('Message Olive').fill('And what about ghee?');
     await page.getByRole('button', { name: 'Send', exact: true }).click();
-    await page
-      .getByText(/not a doctor/i)
-      .nth(1)
-      .waitFor({ timeout: 60_000 });
+    // The header says "Thinking…" while a reply is in flight; the follow-up has landed when it clears.
+    await page.getByText('Thinking…').waitFor({ timeout: 10_000 });
+    await page.getByText('Thinking…').waitFor({ state: 'detached', timeout: 60_000 });
+    await page.getByText('And what about ghee?').waitFor();
   });
 
   await context.close();
