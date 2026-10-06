@@ -6,7 +6,6 @@ import Animated, {
   useReducedMotion,
   useSharedValue,
   withDelay,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
@@ -22,29 +21,31 @@ export interface SplashOverlayProps {
   onReady?: () => void | Promise<void>;
 }
 
-// Timeline (ms). Mascot pops first, the wordmark follows, then the whole thing lifts away.
-const MASCOT_IN = 0;
-const WORDMARK_IN = 380;
-const TAGLINE_IN = 620;
-const HOLD_UNTIL = 1450;
+// Timeline (ms) from the moment the native splash has gone. The mascot is already there: the
+// OS splash drew it at the same spot and size, so the glow and the wordmark grow around it.
+const WORDMARK_IN = 200;
+const TAGLINE_IN = 440;
+const HOLD_UNTIL = 1300;
+/** Matches the `imageWidth` the native splash draws the icon at. */
+const MASCOT_SIZE = 120;
 const LIFT_MS = 420;
 
 /**
- * The first thing a user sees: Olive sprouts in on the page colour, the wordmark rises
- * beneath her, then the screen lifts away to reveal the app already rendered underneath.
- * Matches the native splash background, so the hand-off from the OS splash is seamless.
+ * Takes over from the OS splash without a seam: same background, and the mascot sits exactly
+ * where the OS drew it (screen centre, same size) from the first frame, so the system's fade
+ * lands on an identical picture. Then the glow and wordmark rise and the screen lifts away to
+ * reveal the app already rendered underneath.
  * Honours the reduce-motion setting by cutting straight to the end.
  */
 export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
 
-  const mascot = useSharedValue(reduceMotion ? 1 : 0);
   const glow = useSharedValue(reduceMotion ? 1 : 0);
   const wordmark = useSharedValue(reduceMotion ? 1 : 0);
   const tagline = useSharedValue(reduceMotion ? 1 : 0);
   const lift = useSharedValue(0);
-  // The native splash shows the same mascot and fades out after hideAsync resolves; starting before that doubles it.
+  // Nothing moves until the native splash has faded, so the two never animate against each other.
   const [go, setGo] = useState(false);
 
   useEffect(() => {
@@ -59,8 +60,7 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
       );
       return;
     }
-    mascot.value = withDelay(MASCOT_IN, withSpring(1, { damping: 12, stiffness: 160, mass: 0.9 }));
-    glow.value = withDelay(MASCOT_IN + 80, withTiming(1, { duration: 900, easing: Easing.out(Easing.cubic) }));
+    glow.value = withTiming(1, { duration: 900, easing: Easing.out(Easing.cubic) });
     wordmark.value = withDelay(WORDMARK_IN, withTiming(1, { duration: 520, easing: Easing.out(Easing.cubic) }));
     tagline.value = withDelay(TAGLINE_IN, withTiming(1, { duration: 480, easing: Easing.out(Easing.cubic) }));
     lift.value = withDelay(
@@ -69,7 +69,7 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
         if (done) scheduleOnRN(onDone);
       }),
     );
-  }, [go, reduceMotion, mascot, glow, wordmark, tagline, lift, onDone]);
+  }, [go, reduceMotion, glow, wordmark, tagline, lift, onDone]);
 
   const ready = () => {
     void Promise.resolve(onReady?.()).finally(() => setTimeout(() => setGo(true), 200));
@@ -78,10 +78,6 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: 1 - lift.value,
     transform: [{ scale: 1 + lift.value * 0.06 }],
-  }));
-  const mascotStyle = useAnimatedStyle(() => ({
-    opacity: mascot.value,
-    transform: [{ scale: 0.4 + mascot.value * 0.6 }, { translateY: (1 - mascot.value) * 24 }],
   }));
   const glowStyle = useAnimatedStyle(() => ({
     opacity: glow.value * 0.9,
@@ -106,26 +102,36 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
     >
       <View style={styles.stage}>
         <Animated.View style={[styles.glow, { backgroundColor: alpha(colors.primary, 0.18) }, glowStyle]} />
-        <Animated.View style={mascotStyle}>
-          <Olive mood="happy" size={132} />
+        <Olive mood="happy" size={MASCOT_SIZE} animated={go} />
+      </View>
+      <View style={styles.words}>
+        <Animated.View style={wordmarkStyle}>
+          <Text variant="display" align="center">
+            Olive
+          </Text>
+        </Animated.View>
+        <Animated.View style={taglineStyle}>
+          <Text variant="body" tone="muted" align="center">
+            Your plate and your reports, in one picture.
+          </Text>
         </Animated.View>
       </View>
-      <Animated.View style={wordmarkStyle}>
-        <Text variant="display" align="center">
-          Olive
-        </Text>
-      </Animated.View>
-      <Animated.View style={taglineStyle}>
-        <Text variant="body" tone="muted" align="center">
-          Your plate and your reports, in one picture.
-        </Text>
-      </Animated.View>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: { zIndex: 1000, alignItems: 'center', justifyContent: 'center', gap: space.sm, padding: space.xl },
-  stage: { width: 200, height: 200, alignItems: 'center', justifyContent: 'center', marginBottom: space.md },
+  overlay: { zIndex: 1000, alignItems: 'center', justifyContent: 'center' },
+  // Centred on the screen, like the OS icon. The words hang below it instead of sharing the centre.
+  stage: { width: 200, height: 200, alignItems: 'center', justifyContent: 'center' },
   glow: { position: 'absolute', width: 200, height: 200, borderRadius: 100 },
+  words: {
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    right: 0,
+    marginTop: MASCOT_SIZE / 2 + space.md,
+    paddingHorizontal: space.xl,
+    gap: space.sm,
+  },
 });
