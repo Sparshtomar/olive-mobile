@@ -102,7 +102,8 @@ async function run(scheme) {
   await step('5-meal-saved', async () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     // The toast title, e.g. "Lunch logged" - anchored so "Nothing logged yet" can't match.
-    await page.getByText(/^(Breakfast|Lunch|Snack|Dinner) logged$/).waitFor({ timeout: 15_000 });
+    // Either toast title: "Lunch logged", or "N-day streak" when this is the first meal of the day.
+    await page.getByText(/^(?:(?:Breakfast|Lunch|Snack|Dinner) logged|\d+-day streak)/).waitFor({ timeout: 15_000 });
   });
   await step('6-goal-sheet', async () => {
     await page.getByLabel('Edit your goal').click();
