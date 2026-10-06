@@ -1,16 +1,22 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'react-native';
 
 export type PickResult =
   { status: 'picked'; uri: string } | { status: 'canceled' } | { status: 'denied'; canAskAgain: boolean };
 
 /** Opens the camera or library, handling permission state explicitly so the UI can explain it. */
 export const pickPhoto = async (source: 'camera' | 'library'): Promise<PickResult> => {
-  const permission =
-    source === 'camera'
-      ? await ImagePicker.requestCameraPermissionsAsync()
-      : await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (!permission.granted) return { status: 'denied', canAskAgain: permission.canAskAgain };
+  // Android's photo picker needs no permission; asking for one there fails on devices that
+  // don't declare READ_MEDIA_IMAGES. Only the camera (and the library on iOS/web) is asked for.
+  const needsPermission = source === 'camera' || Platform.OS !== 'android';
+  if (needsPermission) {
+    const permission =
+      source === 'camera'
+        ? await ImagePicker.requestCameraPermissionsAsync()
+        : await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return { status: 'denied', canAskAgain: permission.canAskAgain };
+  }
 
   const options: ImagePicker.ImagePickerOptions = { mediaTypes: ['images'], quality: 0.8, exif: false };
   const result =
