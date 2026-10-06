@@ -1,10 +1,11 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { OliveOrb } from '@/features/chat';
 import { LogSheet, useLogSheet } from '@/features/meals';
 import { haptics } from '@/lib/haptics';
-import { Button, Olive, OfflineBanner, Text, makeStyles, space, useLayout, useTheme } from '@/ui';
+import { Button, Olive, OfflineBanner, Text, alpha, makeStyles, space, useLayout, useTheme } from '@/ui';
 import { ClipboardList, Plus, Sun } from '@/ui/icons';
 import { GlassPill } from '../components/GlassPill';
 import { BottomAction, BottomTab, SideTab } from '../components/NavTabs';
@@ -63,6 +64,13 @@ export const TabsLayout = () => {
         <View
           style={[styles.bottomWrap, { paddingBottom: Math.max(insets.bottom, space.md), pointerEvents: 'box-none' }]}
         >
+          {/* Content fades out under the bar instead of showing through it. */}
+          <LinearGradient
+            colors={[alpha(colors.bg, 0), alpha(colors.bg, 0.9), colors.bg]}
+            locations={[0, 0.55, 1]}
+            style={styles.scrim}
+            pointerEvents="none"
+          />
           <GlassPill>
             <View style={styles.bottomItems} accessibilityRole="tablist">
               <TabTrigger name="today" asChild>
@@ -98,5 +106,6 @@ const useStyles = makeStyles(({ colors }) => ({
   brand: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   sideList: { flexDirection: 'column', gap: space.xs },
   bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
+  scrim: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 150 },
   bottomItems: { flexDirection: 'row', alignItems: 'center', padding: space.xs, gap: 2 },
 }));

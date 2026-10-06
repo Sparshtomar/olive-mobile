@@ -24,7 +24,7 @@ export const GlassPill = ({ children, style }: { children: ReactNode; style?: St
         styles.fill,
         {
           // Without blur the surface has to carry more of the weight.
-          backgroundColor: alpha(colors.surface, canBlur ? (dark ? 0.72 : 0.78) : 0.94),
+          backgroundColor: alpha(colors.surface, canBlur ? 0.88 : 0.96),
           borderColor: alpha(colors.text, dark ? 0.1 : 0.08),
         },
       ]}
