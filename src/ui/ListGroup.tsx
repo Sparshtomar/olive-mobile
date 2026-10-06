@@ -45,7 +45,7 @@ export const ListRow = ({
 }: ListRowProps) => {
   const { colors } = useTheme();
   const styles = useStyles();
-  const content = (
+  const main = (
     <>
       {Icon ? (
         <View style={styles.iconWell}>
@@ -62,23 +62,28 @@ export const ListRow = ({
           </Text>
         ) : null}
       </View>
-      {trailing}
-      {onPress ? <ChevronRight size={20} color={colors.textMuted} /> : null}
     </>
   );
-  return onPress ? (
-    <PressableScale
-      onPress={onPress}
-      scaleTo={0.99}
-      style={styles.row}
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel ?? (subtitle ? `${title}, ${subtitle}` : title)}
-      accessibilityHint={accessibilityHint}
-    >
-      {content}
-    </PressableScale>
-  ) : (
-    <View style={styles.row}>{content}</View>
+  // The trailing control is a sibling of the pressable, never inside it: a button inside a button is invalid HTML.
+  return (
+    <View style={styles.row}>
+      {onPress ? (
+        <PressableScale
+          onPress={onPress}
+          scaleTo={0.99}
+          style={styles.main}
+          accessibilityRole="button"
+          accessibilityLabel={accessibilityLabel ?? (subtitle ? `${title}, ${subtitle}` : title)}
+          accessibilityHint={accessibilityHint}
+        >
+          {main}
+        </PressableScale>
+      ) : (
+        <View style={styles.main}>{main}</View>
+      )}
+      {trailing}
+      {onPress ? <ChevronRight size={20} color={colors.textMuted} /> : null}
+    </View>
   );
 };
 
@@ -91,7 +96,15 @@ const useStyles = makeStyles(({ colors }) => ({
     overflow: 'hidden',
   },
   divider: { height: 1, backgroundColor: colors.border, marginLeft: space.lg },
-  row: { flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.lg, minHeight: 60 },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.sm,
+    minHeight: 60,
+  },
+  main: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm },
   iconWell: {
     width: 40,
     height: 40,
