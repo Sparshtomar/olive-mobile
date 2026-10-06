@@ -13,6 +13,8 @@ export const qk = {
   reports: ['reports'] as const,
   report: (id: string) => ['report', id] as const,
   markers: ['markers'] as const,
+  chats: ['chats'] as const,
+  chat: (id: string) => ['chat', id] as const,
 };
 
 /** Meals, goals and reports all feed the progress views, so any change refreshes them together. */
