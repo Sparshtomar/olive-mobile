@@ -49,7 +49,7 @@ export default function RootLayout() {
     useHints.getState().setReady();
   }, []);
   // Hand off from the OS splash only once our own splash has painted, so there is no flash between them.
-  const hideNativeSplash = useCallback(() => void SplashScreen.hideAsync(), []);
+  const hideNativeSplash = useCallback(() => SplashScreen.hideAsync().then(() => undefined), []);
   // A font failure shouldn't brick the app - system fonts are an acceptable fallback.
   const ready = (fontsLoaded || !!fontError) && hydrated;
 

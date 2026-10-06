@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
@@ -18,8 +18,8 @@ import { useTheme } from './use-theme';
 export interface SplashOverlayProps {
   /** Called when the overlay has finished and unmounted itself from view. */
   onDone: () => void;
-  /** Fires on first layout - the moment the native splash can hide without a flash. */
-  onReady?: () => void;
+  /** Fires on first layout - the moment the native splash can hide. Resolve when it has, so the mascot waits. */
+  onReady?: () => void | Promise<void>;
 }
 
 // Timeline (ms). Mascot pops first, the wordmark follows, then the whole thing lifts away.
@@ -44,8 +44,11 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
   const wordmark = useSharedValue(reduceMotion ? 1 : 0);
   const tagline = useSharedValue(reduceMotion ? 1 : 0);
   const lift = useSharedValue(0);
+  // The native splash shows the same mascot and fades out after hideAsync resolves; starting before that doubles it.
+  const [go, setGo] = useState(false);
 
   useEffect(() => {
+    if (!go) return;
     // Animation callbacks run on the UI thread: hop back to JS with scheduleOnRN rather than calling a closure.
     if (reduceMotion) {
       lift.value = withDelay(
@@ -66,7 +69,11 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
         if (done) scheduleOnRN(onDone);
       }),
     );
-  }, [reduceMotion, mascot, glow, wordmark, tagline, lift, onDone]);
+  }, [go, reduceMotion, mascot, glow, wordmark, tagline, lift, onDone]);
+
+  const ready = () => {
+    void Promise.resolve(onReady?.()).finally(() => setTimeout(() => setGo(true), 200));
+  };
 
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: 1 - lift.value,
@@ -92,7 +99,7 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
   return (
     <Animated.View
       style={[StyleSheet.absoluteFill, styles.overlay, { backgroundColor: colors.bg }, overlayStyle]}
-      onLayout={onReady}
+      onLayout={ready}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       pointerEvents="auto"
