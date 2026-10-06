@@ -1,5 +1,5 @@
 import { ACTIVITY_LABEL, ACTIVITY_LEVELS, PACES, type ActivityLevel, type GoalType } from '@sparshtomar/olive-shared';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Chip, OptionCard, Text, space } from '@/ui';
 import { Scale, TrendingDown, TrendingUp } from '@/ui/icons';
 
@@ -55,11 +55,17 @@ export const GoalPicker = ({ goalType, pace, onChange }: GoalPickerProps) => (
         <Text variant="label" tone="muted">
           How fast?
         </Text>
-        <View style={{ flexDirection: 'row', gap: space.sm }} accessibilityRole="radiogroup" accessibilityLabel="Pace">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ flexDirection: 'row', gap: space.sm, paddingRight: space.lg }}
+          accessibilityRole="radiogroup"
+          accessibilityLabel="Pace"
+        >
           {PACES.map((p) => (
             <Chip key={p} label={`${p} kg / week`} selected={pace === p} onPress={() => onChange(goalType, p)} />
           ))}
-        </View>
+        </ScrollView>
       </View>
     ) : null}
   </View>
