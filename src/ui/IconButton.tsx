@@ -1,7 +1,8 @@
 import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import type { LucideIcon } from './icons';
 import { PressableScale } from './PressableScale';
-import { colors, radius } from './theme';
+import { radius } from './theme';
+import { useTheme } from './use-theme';
 
 export interface IconButtonProps {
   icon: LucideIcon;
@@ -21,26 +22,29 @@ export const IconButton = ({
   size = 40,
   disabled,
   style,
-}: IconButtonProps) => (
-  <PressableScale
-    onPress={onPress}
-    disabled={disabled}
-    accessibilityRole="button"
-    accessibilityLabel={label}
-    hitSlop={8}
-    scaleTo={0.9}
-    style={[
-      styles.base,
-      { width: size, height: size },
-      tone === 'primary' && { backgroundColor: colors.primarySoft },
-      tone === 'default' && { backgroundColor: colors.surfaceMuted },
-      disabled && { opacity: 0.4 },
-      style,
-    ]}
-  >
-    <Icon size={size * 0.48} color={tone === 'primary' ? colors.primary : colors.text} strokeWidth={2} />
-  </PressableScale>
-);
+}: IconButtonProps) => {
+  const { colors } = useTheme();
+  return (
+    <PressableScale
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      hitSlop={8}
+      scaleTo={0.9}
+      style={[
+        styles.base,
+        { width: size, height: size },
+        tone === 'primary' && { backgroundColor: colors.primarySoft },
+        tone === 'default' && { backgroundColor: colors.surfaceMuted },
+        disabled && { opacity: 0.4 },
+        style,
+      ]}
+    >
+      <Icon size={size * 0.48} color={tone === 'primary' ? colors.primary : colors.text} strokeWidth={2} />
+    </PressableScale>
+  );
+};
 
 const styles = StyleSheet.create({
   base: { borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },

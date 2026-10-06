@@ -1,10 +1,23 @@
 import { MARKER_CATALOG, NUTRIENT_META, formatRange, type MarkerKey } from '@sparshtomar/olive-shared';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useMarkers } from '@/api';
 import { longDate } from '@/lib/format';
-import { Card, IconButton, Olive, Pill, Screen, Skeleton, StateView, Text, colors, radius, space } from '@/ui';
+import {
+  Card,
+  IconButton,
+  Olive,
+  Pill,
+  Screen,
+  Skeleton,
+  StateView,
+  Text,
+  makeStyles,
+  radius,
+  space,
+  useTheme,
+} from '@/ui';
 import { ArrowLeft, Lightbulb, TrendingDown, TrendingUp } from '@/ui/icons';
 import { TrendChart } from '../components/TrendChart';
 import { STATUS_LABEL, statusTone } from '../lib/status';
@@ -14,6 +27,8 @@ const goBack = () => (router.canGoBack() ? router.back() : router.replace('/repo
 export const MarkerScreen = () => {
   const { key } = useLocalSearchParams<{ key: MarkerKey }>();
   const markers = useMarkers();
+  const { colors } = useTheme();
+  const styles = useStyles();
   const [chartWidth, setChartWidth] = useState(0);
   const trend = markers.data?.find((m) => m.key === key);
   const def = MARKER_CATALOG[key];
@@ -92,7 +107,7 @@ export const MarkerScreen = () => {
 
       {trend.tip ? (
         <Card style={styles.tip}>
-          <Lightbulb size={20} color={colors.carbs} />
+          <Lightbulb size={20} color={colors.tip} />
           <Text style={{ flex: 1 }}>{trend.tip}</Text>
         </Card>
       ) : null}
@@ -131,7 +146,7 @@ export const MarkerScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   hero: { flexDirection: 'row', alignItems: 'flex-start', gap: space.md },
   delta: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   tip: {
@@ -150,4 +165,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-});
+}));

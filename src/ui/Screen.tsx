@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View, type ScrollViewProps } from 'react-native';
+import { RefreshControl, ScrollView, View, type ScrollViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, space } from './theme';
+import { space } from './theme';
 import { useLayout } from './use-layout';
+import { makeStyles, useTheme } from './use-theme';
 
 export interface ScreenProps {
   children: ReactNode;
@@ -29,6 +30,8 @@ export const Screen = ({
 }: ScreenProps) => {
   const insets = useSafeAreaInsets();
   const { isWide } = useLayout();
+  const { colors } = useTheme();
+  const styles = useStyles();
   return (
     <View style={styles.root}>
       <ScrollView
@@ -49,6 +52,7 @@ export const Screen = ({
               onRefresh={onRefresh}
               tintColor={colors.primary}
               colors={[colors.primary]}
+              progressBackgroundColor={colors.surface}
             />
           ) : undefined
         }
@@ -60,8 +64,8 @@ export const Screen = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   root: { flex: 1, backgroundColor: colors.bg },
   content: { flexGrow: 1 },
   inner: { width: '100%', alignSelf: 'center', gap: space.lg },
-});
+}));

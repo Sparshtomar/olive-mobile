@@ -1,7 +1,9 @@
 import { forwardRef, useState } from 'react';
-import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import { TextInput, View, type TextInputProps } from 'react-native';
 import { Text } from './Text';
-import { colors, fonts, radius, space } from './theme';
+import { radius, space } from './theme';
+import { inputType } from './typography';
+import { makeStyles, useTheme } from './use-theme';
 
 export interface FieldProps extends TextInputProps {
   label?: string;
@@ -11,6 +13,8 @@ export interface FieldProps extends TextInputProps {
 
 export const Field = forwardRef<TextInput, FieldProps>(
   ({ label, error, suffix, style, onFocus, onBlur, ...rest }, ref) => {
+    const { colors } = useTheme();
+    const styles = useStyles();
     const [focused, setFocused] = useState(false);
     return (
       <View style={{ gap: space.xs }}>
@@ -52,7 +56,7 @@ export const Field = forwardRef<TextInput, FieldProps>(
 );
 Field.displayName = 'Field';
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   box: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -67,11 +71,10 @@ const styles = StyleSheet.create({
   error: { borderColor: colors.danger },
   input: {
     flex: 1,
-    fontFamily: fonts.regular,
-    fontSize: 16,
+    ...inputType.body,
     color: colors.text,
     paddingVertical: space.md,
     // Removes the web focus ring; the border shows focus instead.
     outlineWidth: 0,
   },
-});
+}));

@@ -161,17 +161,26 @@ export default defineConfig([
       'react-hooks/immutability': 'off',
       // HTML-entity escaping doesn't apply to React Native <Text>.
       'react/no-unescaped-entities': 'off',
-      // Colours come from design tokens.
+      // Colours come from design tokens, and follow the active light/dark theme.
       'no-restricted-syntax': [
         'error',
         {
           selector: 'Literal[value=/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
           message: 'Use a colour token from ui/theme.ts instead of a hex literal.',
         },
+        {
+          selector: 'Literal[value=/^rgba?\\(/]',
+          message: 'Use a colour token from ui/theme.ts (with `alpha()` for transparency) instead of an rgb literal.',
+        },
+        {
+          selector:
+            "ImportDeclaration[source.value='react-native'] ImportSpecifier[imported.name=/^(useColorScheme|Appearance)$/]",
+          message: 'Read the colour scheme through `useTheme()` from `@/ui`, so every screen agrees on it.',
+        },
       ],
     },
   },
-  { files: ['src/ui/theme.ts'], rules: { 'no-restricted-syntax': 'off' } },
+  { files: ['src/ui/theme.ts', 'src/ui/use-theme.ts'], rules: { 'no-restricted-syntax': 'off' } },
 
   ...layerRules,
 

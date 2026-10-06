@@ -2,7 +2,7 @@ import { NUTRIENT_META, type FocusProgress } from '@sparshtomar/olive-shared';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { grams } from '@/lib/format';
-import { Card, PressableScale, ProgressBar, Text, colors, space } from '@/ui';
+import { Card, PressableScale, ProgressBar, Text, space, useTheme } from '@/ui';
 import { FlaskConical } from '@/ui/icons';
 
 /**
@@ -10,6 +10,7 @@ import { FlaskConical } from '@/ui/icons';
  * budget ("max") or goal ("min") tracked against what was eaten.
  */
 export const FocusCard = ({ focus }: { focus: FocusProgress[] }) => {
+  const { colors } = useTheme();
   if (focus.length === 0) return null;
   return (
     <PressableScale

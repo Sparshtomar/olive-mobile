@@ -21,4 +21,6 @@ export * from './StateView';
 export * from './Text';
 export * from './theme';
 export * from './Toast';
+export * from './typography';
 export * from './use-layout';
+export * from './use-theme';

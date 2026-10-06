@@ -1,7 +1,7 @@
 import { formatRange, type MarkerTrend, type ReportSummary } from '@sparshtomar/olive-shared';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useMarkers, useReports } from '@/api';
 import { describeError } from '@/lib/errors';
 import { longDate } from '@/lib/format';
@@ -16,10 +16,11 @@ import {
   StateView,
   TAB_BAR_CLEARANCE,
   Text,
-  colors,
+  makeStyles,
   radius,
   space,
   useLayout,
+  useTheme,
 } from '@/ui';
 import { ChevronRight, FileText, Plus } from '@/ui/icons';
 import { Sparkline } from '../components/TrendChart';
@@ -31,6 +32,7 @@ export const ReportsScreen = () => {
   const markers = useMarkers();
   const [uploadOpen, setUploadOpen] = useState(false);
   const { isWide } = useLayout();
+  const styles = useStyles();
 
   const refresh = () => Promise.all([reports.refetch(), markers.refetch()]);
   const loading = !reports.data && reports.isLoading;
@@ -110,6 +112,8 @@ export const ReportsScreen = () => {
 };
 
 const MarkerCard = ({ marker, wide }: { marker: MarkerTrend; wide: boolean }) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
   const tone = statusTone(marker.latest.status);
   const values = marker.history.map((h) => h.value);
   return (
@@ -143,31 +147,35 @@ const MarkerCard = ({ marker, wide }: { marker: MarkerTrend; wide: boolean }) =>
   );
 };
 
-const ReportRow = ({ report }: { report: ReportSummary }) => (
-  <PressableScale
-    onPress={() => router.push(`/report/${report.id}`)}
-    style={styles.reportRow}
-    scaleTo={0.98}
-    accessibilityRole="button"
-    accessibilityLabel={`${report.title}, ${longDate(report.reportDate)}, ${report.flaggedCount} out of range`}
-  >
-    <View style={styles.reportIcon}>
-      <FileText size={20} color={colors.primary} />
-    </View>
-    <View style={{ flex: 1, gap: 2 }}>
-      <Text variant="bodyStrong" numberOfLines={1}>
-        {report.title}
-      </Text>
-      <Text variant="caption" tone="muted">
-        {longDate(report.reportDate)} · {report.markerCount} values
-        {report.flaggedCount > 0 ? ` · ${report.flaggedCount} out of range` : ''}
-      </Text>
-    </View>
-    <ChevronRight size={18} color={colors.textFaint} />
-  </PressableScale>
-);
+const ReportRow = ({ report }: { report: ReportSummary }) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
+  return (
+    <PressableScale
+      onPress={() => router.push(`/report/${report.id}`)}
+      style={styles.reportRow}
+      scaleTo={0.98}
+      accessibilityRole="button"
+      accessibilityLabel={`${report.title}, ${longDate(report.reportDate)}, ${report.flaggedCount} out of range`}
+    >
+      <View style={styles.reportIcon}>
+        <FileText size={20} color={colors.primary} />
+      </View>
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text variant="bodyStrong" numberOfLines={1}>
+          {report.title}
+        </Text>
+        <Text variant="caption" tone="muted">
+          {longDate(report.reportDate)} · {report.markerCount} values
+          {report.flaggedCount > 0 ? ` · ${report.flaggedCount} out of range` : ''}
+        </Text>
+      </View>
+      <ChevronRight size={18} color={colors.textFaint} />
+    </PressableScale>
+  );
+};
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   empty: { alignItems: 'center', gap: space.md, paddingVertical: space.xxl },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
@@ -201,4 +209,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+}));

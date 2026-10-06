@@ -1,15 +1,18 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsOnline } from '@/lib/network';
 import { WifiOff } from './icons';
 import { Text } from './Text';
-import { colors, space } from './theme';
+import { space } from './theme';
+import { makeStyles, useTheme } from './use-theme';
 
 /** Shown while offline: cached data stays readable; logging waits for a connection. */
 export const OfflineBanner = () => {
   const online = useIsOnline();
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const styles = useStyles();
   if (online) return null;
   return (
     <Animated.View
@@ -25,7 +28,7 @@ export const OfflineBanner = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   banner: { backgroundColor: colors.warmSoft, paddingBottom: space.sm, paddingHorizontal: space.lg },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.sm, justifyContent: 'center' },
-});
+}));

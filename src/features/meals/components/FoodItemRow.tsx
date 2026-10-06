@@ -1,10 +1,10 @@
 import { scaleNutrients, type FoodItem } from '@sparshtomar/olive-shared';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { grams, kcal } from '@/lib/format';
 import { haptics } from '@/lib/haptics';
-import { Field, IconButton, Pill, PressableScale, Text, colors, radius, space } from '@/ui';
+import { Field, IconButton, Pill, PressableScale, Text, makeStyles, radius, space, useTheme } from '@/ui';
 import { ChevronDown, ChevronUp, Minus, Plus, Trash2 } from '@/ui/icons';
 import { MAX_PORTION, MIN_PORTION, formatQuantity, stepQuantity, withCalories } from '../lib/portions';
 
@@ -15,6 +15,8 @@ export interface FoodItemRowProps {
 }
 
 export const FoodItemRow = ({ item, onChange, onRemove }: FoodItemRowProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
   const [open, setOpen] = useState(false);
   const [kcalText, setKcalText] = useState(String(Math.round(item.nutrients.calories)));
   useEffect(() => setKcalText(String(Math.round(item.nutrients.calories))), [item.nutrients.calories]);
@@ -70,7 +72,7 @@ export const FoodItemRow = ({ item, onChange, onRemove }: FoodItemRowProps) => {
           {unsure ? <Pill label="Olive isn't sure — check the portion" tone="warm" /> : null}
         </PressableScale>
         <View style={{ alignItems: 'flex-end', gap: space.xs }}>
-          <Text variant="heading" style={{ fontSize: 18 }}>
+          <Text variant="subheading">
             {kcal(total.calories)}
             <Text variant="caption" tone="muted">
               {' '}
@@ -137,17 +139,20 @@ export const FoodItemRow = ({ item, onChange, onRemove }: FoodItemRowProps) => {
   );
 };
 
-const Macro = ({ label, value, color }: { label: string; value: number; color: string }) => (
-  <View style={styles.macro}>
-    <View style={[styles.dot, { backgroundColor: color }]} />
-    <Text variant="caption" tone="muted">
-      {label}
-    </Text>
-    <Text variant="label">{grams(value)} g</Text>
-  </View>
-);
+const Macro = ({ label, value, color }: { label: string; value: number; color: string }) => {
+  const styles = useStyles();
+  return (
+    <View style={styles.macro}>
+      <View style={[styles.dot, { backgroundColor: color }]} />
+      <Text variant="caption" tone="muted">
+        {label}
+      </Text>
+      <Text variant="label">{grams(value)} g</Text>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
@@ -166,4 +171,4 @@ const styles = StyleSheet.create({
   macro: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   dot: { width: 7, height: 7, borderRadius: 4 },
   editRow: { flexDirection: 'row', gap: space.sm, alignItems: 'flex-start' },
-});
+}));

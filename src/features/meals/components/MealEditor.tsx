@@ -1,7 +1,7 @@
 import { MEAL_SLOTS, MEAL_SLOT_LABEL, type FoodItem, type MealSlot } from '@sparshtomar/olive-shared';
 import { router } from 'expo-router';
 import { useRef, useState, type ReactNode } from 'react';
-import { Image, StyleSheet, TextInput, View } from 'react-native';
+import { Image, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDay, analyzeMeal } from '@/api';
 import { errorMessage } from '@/lib/errors';
@@ -16,12 +16,12 @@ import {
   IconButton,
   Screen,
   Text,
-  colors,
-  fonts,
+  inputType,
+  makeStyles,
   radius,
-  shadow,
   space,
   useLayout,
+  useTheme,
 } from '@/ui';
 import { ArrowLeft, Mic, Plus, Trash2 } from '@/ui/icons';
 import { caloriesLeftAfter, mealTitle, mealTotals } from '../lib/review';
@@ -67,6 +67,8 @@ export const MealEditor = ({
 }: MealEditorProps) => {
   const insets = useSafeAreaInsets();
   const { isWide } = useLayout();
+  const { colors } = useTheme();
+  const styles = useStyles();
   const nextKey = useRef(0);
   const keyed = (item: FoodItem): Keyed => ({ key: nextKey.current++, item });
 
@@ -267,7 +269,7 @@ export const MealEditor = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors, shadow }) => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   photo: { width: '100%', aspectRatio: 4 / 3, borderRadius: radius.lg, backgroundColor: colors.surfaceMuted },
   transcript: {
@@ -278,8 +280,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primarySoft,
   },
   titleInput: {
-    fontFamily: fonts.display,
-    fontSize: 24,
+    ...inputType.title,
     color: colors.text,
     paddingVertical: space.xs,
     outlineWidth: 0,
@@ -295,4 +296,4 @@ const styles = StyleSheet.create({
     ...shadow.floating,
   },
   footerInner: { flexDirection: 'row', alignItems: 'center', gap: space.md, width: '100%', alignSelf: 'center' },
-});
+}));

@@ -7,14 +7,27 @@ import {
 } from '@sparshtomar/olive-shared';
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCreateReport } from '@/api';
 import { errorMessage } from '@/lib/errors';
 import { todayKey } from '@/lib/format';
 import { haptics } from '@/lib/haptics';
 import { useBackGuard } from '@/lib/use-back-guard';
-import { Button, Card, ConfirmSheet, Field, IconButton, Screen, Text, colors, fonts, shadow, space, toast } from '@/ui';
+import {
+  Button,
+  Card,
+  ConfirmSheet,
+  Field,
+  IconButton,
+  Screen,
+  Text,
+  inputType,
+  makeStyles,
+  space,
+  toast,
+  useTheme,
+} from '@/ui';
 import { ArrowLeft, Check } from '@/ui/icons';
 import { isValidMarkerValue, parseMarkerValue, reportDateError, savedReportMessage, trackedFirst } from '../lib/review';
 import { ReviewMarkerRow, type ReviewRow } from './ReviewMarkerRow';
@@ -28,6 +41,8 @@ interface ReportReviewProps {
 /** Every extracted value is editable before saving — a misread decimal in health data matters. */
 export const ReportReview = ({ draft, sex, onLeave }: ReportReviewProps) => {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const styles = useStyles();
   const create = useCreateReport();
   const nextKey = useRef(0);
   const [title, setTitle] = useState(draft.labName ?? 'Lab report');
@@ -174,11 +189,10 @@ export const ReportReview = ({ draft, sex, onLeave }: ReportReviewProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors, shadow }) => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   titleInput: {
-    fontFamily: fonts.display,
-    fontSize: 24,
+    ...inputType.title,
     color: colors.text,
     paddingVertical: space.xs,
     outlineWidth: 0,
@@ -195,4 +209,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.lg,
     ...shadow.floating,
   },
-});
+}));

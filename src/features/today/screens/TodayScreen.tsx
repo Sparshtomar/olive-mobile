@@ -1,6 +1,6 @@
 import type { DaySummary } from '@sparshtomar/olive-shared';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useMe, useDay, useInsights, useTrends } from '@/api';
 import { GoalSheet } from '@/features/goal';
 import { useLogSheet } from '@/features/meals';
@@ -16,10 +16,11 @@ import {
   StateView,
   Text,
   TAB_BAR_CLEARANCE,
-  colors,
+  makeStyles,
   radius,
   space,
   useLayout,
+  useTheme,
   type OliveMood,
 } from '@/ui';
 import { Flame, Target } from '@/ui/icons';
@@ -50,6 +51,8 @@ export const TodayScreen = () => {
   const [date, setDate] = useState(today);
   const [goalOpen, setGoalOpen] = useState(false);
   const { isWide } = useLayout();
+  const { colors } = useTheme();
+  const styles = useStyles();
   const me = useMe();
   const day = useDay(date);
   const trends = useTrends(today);
@@ -173,7 +176,7 @@ export const TodayScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   streak: {
     flexDirection: 'row',
@@ -191,4 +194,4 @@ const styles = StyleSheet.create({
   columns: { flexDirection: 'row', gap: space.xl, alignItems: 'flex-start' },
   mainCol: { flex: 3, gap: space.lg },
   sideCol: { flex: 2, gap: space.lg },
-});
+}));

@@ -1,9 +1,20 @@
 import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LogSheet, useLogSheet } from '@/features/meals';
 import { haptics } from '@/lib/haptics';
-import { Button, Olive, OfflineBanner, PressableScale, Text, colors, radius, shadow, space, useLayout } from '@/ui';
+import {
+  Button,
+  Olive,
+  OfflineBanner,
+  PressableScale,
+  Text,
+  makeStyles,
+  radius,
+  space,
+  useLayout,
+  useTheme,
+} from '@/ui';
 import { ClipboardList, Plus, Sun } from '@/ui/icons';
 import { BottomTab, SideTab } from '../components/NavTabs';
 
@@ -11,6 +22,8 @@ import { BottomTab, SideTab } from '../components/NavTabs';
 export const TabsLayout = () => {
   const { isWide } = useLayout();
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const styles = useStyles();
   const showLogSheet = useLogSheet((s) => s.show);
 
   const openLog = () => {
@@ -78,7 +91,7 @@ export const TabsLayout = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors, shadow }) => ({
   sidebar: {
     width: 248,
     paddingHorizontal: space.xl,
@@ -116,4 +129,4 @@ const styles = StyleSheet.create({
     borderColor: colors.bg,
     ...shadow.floating,
   },
-});
+}));

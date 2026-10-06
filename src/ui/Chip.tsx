@@ -1,7 +1,7 @@
-import { StyleSheet } from 'react-native';
 import { PressableScale } from './PressableScale';
 import { Text } from './Text';
-import { colors, radius, space } from './theme';
+import { radius, space } from './theme';
+import { makeStyles } from './use-theme';
 
 export interface ChipProps {
   label: string;
@@ -9,20 +9,23 @@ export interface ChipProps {
   onPress?: () => void;
 }
 
-export const Chip = ({ label, selected, onPress }: ChipProps) => (
-  <PressableScale
-    onPress={onPress}
-    accessibilityRole="radio"
-    accessibilityState={{ selected: !!selected, checked: !!selected }}
-    style={[styles.chip, selected && styles.selected]}
-  >
-    <Text variant="label" style={{ color: selected ? colors.textOnPrimary : colors.text }}>
-      {label}
-    </Text>
-  </PressableScale>
-);
+export const Chip = ({ label, selected, onPress }: ChipProps) => {
+  const styles = useStyles();
+  return (
+    <PressableScale
+      onPress={onPress}
+      accessibilityRole="radio"
+      accessibilityState={{ selected: !!selected, checked: !!selected }}
+      style={[styles.chip, selected && styles.selected]}
+    >
+      <Text variant="label" tone={selected ? 'inverse' : 'default'}>
+        {label}
+      </Text>
+    </PressableScale>
+  );
+};
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   chip: {
     paddingHorizontal: space.md + 2,
     minHeight: 36,
@@ -33,4 +36,4 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   selected: { backgroundColor: colors.primary, borderColor: colors.primary },
-});
+}));

@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 import { CheckCircle2, Info, TriangleAlert, type LucideIcon } from './icons';
 import { Text } from './Text';
-import { colors, radius, shadow, space } from './theme';
+import { radius, space, type ColorToken } from './theme';
+import { makeStyles, useTheme } from './use-theme';
 
 type ToastTone = 'success' | 'info' | 'error';
 
@@ -37,16 +38,18 @@ export const toast = {
   error: (title: string, body?: string) => useToastStore.getState().show({ tone: 'error', title, body }),
 };
 
-const ICON: Record<ToastTone, { icon: LucideIcon; color: string }> = {
-  success: { icon: CheckCircle2, color: colors.primary },
-  info: { icon: Info, color: colors.fat },
-  error: { icon: TriangleAlert, color: colors.danger },
+const ICON: Record<ToastTone, { icon: LucideIcon; color: ColorToken }> = {
+  success: { icon: CheckCircle2, color: 'primary' },
+  info: { icon: Info, color: 'info' },
+  error: { icon: TriangleAlert, color: 'danger' },
 };
 
 export const ToastHost = () => {
   const current = useToastStore((s) => s.current);
   const dismiss = useToastStore((s) => s.dismiss);
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const styles = useStyles();
 
   useEffect(() => {
     if (!current) return;
@@ -67,7 +70,7 @@ export const ToastHost = () => {
         accessibilityLiveRegion="polite"
         accessibilityRole="alert"
       >
-        <Icon size={20} color={color} strokeWidth={2.2} />
+        <Icon size={20} color={colors[color]} strokeWidth={2.2} />
         <View style={{ flex: 1 }}>
           <Text variant="bodyStrong">{current.title}</Text>
           {current.body ? (
@@ -81,7 +84,7 @@ export const ToastHost = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors, shadow }) => ({
   host: { position: 'absolute', left: 0, right: 0, alignItems: 'center', paddingHorizontal: space.lg, zIndex: 100 },
   toast: {
     flexDirection: 'row',
@@ -97,4 +100,4 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     ...shadow.floating,
   },
-});
+}));

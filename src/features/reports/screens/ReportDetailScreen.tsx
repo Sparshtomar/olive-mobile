@@ -1,7 +1,7 @@
 import { formatRange, type ReportMarker } from '@sparshtomar/olive-shared';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useDeleteReport, useReport } from '@/api';
 import { describeError, errorMessage, isNotFound } from '@/lib/errors';
 import { longDate } from '@/lib/format';
@@ -16,10 +16,11 @@ import {
   Skeleton,
   StateView,
   Text,
-  colors,
+  makeStyles,
   radius,
   space,
   toast,
+  useTheme,
 } from '@/ui';
 import { ArrowLeft, ChevronRight, Trash2 } from '@/ui/icons';
 import { STATUS_LABEL, statusTone } from '../lib/status';
@@ -30,6 +31,7 @@ export const ReportDetailScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const report = useReport(id);
   const remove = useDeleteReport();
+  const styles = useStyles();
   const [confirm, setConfirm] = useState(false);
 
   const header = (
@@ -113,6 +115,8 @@ export const ReportDetailScreen = () => {
 };
 
 const MarkerRow = ({ marker: m }: { marker: ReportMarker }) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
   const printedRange = formatRange({ low: m.refLow ?? undefined, high: m.refHigh ?? undefined }, m.unit);
   const content = (
     <>
@@ -151,7 +155,7 @@ const MarkerRow = ({ marker: m }: { marker: ReportMarker }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   row: {
     flexDirection: 'row',
@@ -163,4 +167,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-});
+}));

@@ -7,10 +7,10 @@ import {
   type RecordingOptions,
 } from 'expo-audio';
 import { useEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { haptics } from '@/lib/haptics';
-import { Button, PressableScale, Text, colors, space } from '@/ui';
+import { Button, PressableScale, Text, makeStyles, space, useTheme } from '@/ui';
 import { Mic, Square } from '@/ui/icons';
 
 const MAX_SECONDS = 30;
@@ -31,6 +31,8 @@ export interface VoiceRecorderProps {
 }
 
 export const VoiceRecorder = ({ onRecorded, onPermissionDenied, onCancel }: VoiceRecorderProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
   const recorder = useAudioRecorder(VOICE_PRESET);
   const state = useAudioRecorderState(recorder, 100);
   const [error, setError] = useState<string | null>(null);
@@ -126,7 +128,7 @@ export const VoiceRecorder = ({ onRecorded, onPermissionDenied, onCancel }: Voic
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   wrap: { alignItems: 'center', gap: space.sm, paddingVertical: space.md },
   micArea: { width: 160, height: 160, alignItems: 'center', justifyContent: 'center', marginVertical: space.lg },
   ring: { position: 'absolute', width: 120, height: 120, borderRadius: 60, backgroundColor: colors.warm },
@@ -138,4 +140,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+}));

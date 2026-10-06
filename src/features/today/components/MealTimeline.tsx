@@ -1,11 +1,11 @@
 import { MEAL_SLOTS, MEAL_SLOT_LABEL, type Meal, type MealSlot } from '@sparshtomar/olive-shared';
 import { router } from 'expo-router';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, View } from 'react-native';
 import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 import { mealPhotoUrl } from '@/api';
 import { useLogSheet } from '@/features/meals';
 import { kcal, time } from '@/lib/format';
-import { PressableScale, Text, colors, radius, space } from '@/ui';
+import { PressableScale, Text, makeStyles, radius, space, useTheme } from '@/ui';
 import { Camera, ChevronRight, Keyboard, Mic, Plus, type LucideIcon } from '@/ui/icons';
 
 const SOURCE_ICON: Record<Meal['source'], LucideIcon> = { photo: Camera, voice: Mic, text: Keyboard };
@@ -13,6 +13,7 @@ const SOURCE_ICON: Record<Meal['source'], LucideIcon> = { photo: Camera, voice: 
 /** The day by meal slot. Empty main meals invite logging; an empty snack slot stays out of the way. */
 export const MealTimeline = ({ meals, date }: { meals: Meal[]; date: string }) => {
   const showLog = useLogSheet((s) => s.show);
+  const styles = useStyles();
   return (
     <View style={{ gap: space.lg }}>
       {MEAL_SLOTS.map((slot) => {
@@ -43,6 +44,8 @@ export const MealTimeline = ({ meals, date }: { meals: Meal[]; date: string }) =
 };
 
 const MealRow = ({ meal }: { meal: Meal }) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
   const Icon = SOURCE_ICON[meal.source];
   const photo = mealPhotoUrl(meal);
   return (
@@ -78,21 +81,25 @@ const MealRow = ({ meal }: { meal: Meal }) => {
   );
 };
 
-const AddRow = ({ slot, onPress }: { slot: MealSlot; onPress: () => void }) => (
-  <PressableScale
-    onPress={onPress}
-    style={styles.add}
-    accessibilityRole="button"
-    accessibilityLabel={`Log ${MEAL_SLOT_LABEL[slot].toLowerCase()}`}
-  >
-    <Plus size={18} color={colors.primary} />
-    <Text variant="bodyStrong" tone="primary">
-      Add {MEAL_SLOT_LABEL[slot].toLowerCase()}
-    </Text>
-  </PressableScale>
-);
+const AddRow = ({ slot, onPress }: { slot: MealSlot; onPress: () => void }) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
+  return (
+    <PressableScale
+      onPress={onPress}
+      style={styles.add}
+      accessibilityRole="button"
+      accessibilityLabel={`Log ${MEAL_SLOT_LABEL[slot].toLowerCase()}`}
+    >
+      <Plus size={18} color={colors.primary} />
+      <Text variant="bodyStrong" tone="primary">
+        Add {MEAL_SLOT_LABEL[slot].toLowerCase()}
+      </Text>
+    </PressableScale>
+  );
+};
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   slotHead: { flexDirection: 'row', justifyContent: 'space-between' },
   row: {
     flexDirection: 'row',
@@ -117,4 +124,4 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: colors.borderStrong,
   },
-});
+}));

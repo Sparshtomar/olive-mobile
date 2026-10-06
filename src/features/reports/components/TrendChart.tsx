@@ -2,13 +2,14 @@ import type { MarkerTrend } from '@sparshtomar/olive-shared';
 import { View } from 'react-native';
 import Svg, { Circle, Line, Polyline, Rect, Text as SvgText } from 'react-native-svg';
 import { shortDate } from '@/lib/format';
-import { colors, fonts } from '@/ui';
+import { type as typeScale, useTheme } from '@/ui';
 
 const HEIGHT = 180;
 const PAD = { top: 16, bottom: 28, left: 8, right: 8 };
 
 /** Marker history with the healthy range shaded, so direction and distance-to-range are both visible. */
 export const TrendChart = ({ trend, width }: { trend: MarkerTrend; width: number }) => {
+  const { colors } = useTheme();
   const values = trend.history.map((h) => h.value);
   const { low, high } = trend.range;
   const lo = Math.min(...values, low ?? Infinity, high ?? Infinity);
@@ -88,8 +89,8 @@ export const TrendChart = ({ trend, width }: { trend: MarkerTrend; width: number
             key={`l${h.reportId}${i}`}
             x={x(i)}
             y={HEIGHT - 8}
-            fontSize={11}
-            fontFamily={fonts.regular}
+            fontSize={typeScale.micro.fontSize}
+            fontFamily={typeScale.micro.fontFamily}
             fill={colors.textMuted}
             textAnchor={
               trend.history.length === 1
@@ -114,13 +115,15 @@ export const Sparkline = ({
   values,
   width = 72,
   height = 28,
-  color = colors.text,
+  color,
 }: {
   values: number[];
   width?: number;
   height?: number;
+  /** Defaults to the text colour. */
   color?: string;
 }) => {
+  const { colors } = useTheme();
   if (values.length < 2) return null;
   const min = Math.min(...values);
   const max = Math.max(...values);
@@ -132,7 +135,7 @@ export const Sparkline = ({
     <Svg width={width} height={height}>
       <Polyline
         points={points}
-        stroke={color}
+        stroke={color ?? colors.text}
         strokeWidth={2}
         fill="none"
         strokeLinejoin="round"

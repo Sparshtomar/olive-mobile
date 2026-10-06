@@ -1,8 +1,9 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { haptics } from '@/lib/haptics';
 import { PressableScale } from './PressableScale';
 import { Text } from './Text';
-import { colors, radius } from './theme';
+import { radius } from './theme';
+import { makeStyles } from './use-theme';
 
 export interface SegmentedProps<T extends string> {
   options: readonly { value: T; label: string }[];
@@ -12,6 +13,7 @@ export interface SegmentedProps<T extends string> {
 }
 
 export function Segmented<T extends string>({ options, value, onChange, accessibilityLabel }: SegmentedProps<T>) {
+  const styles = useStyles();
   return (
     <View style={styles.track} accessibilityRole="radiogroup" accessibilityLabel={accessibilityLabel}>
       {options.map((o) => {
@@ -27,7 +29,7 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
             accessibilityState={{ checked: selected }}
             style={[styles.option, selected && styles.selected]}
           >
-            <Text variant="label" style={{ color: selected ? colors.text : colors.textMuted }}>
+            <Text variant="label" tone={selected ? 'default' : 'muted'}>
               {o.label}
             </Text>
           </PressableScale>
@@ -37,7 +39,7 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors, shadow }) => ({
   track: {
     flexDirection: 'row',
     backgroundColor: colors.surfaceMuted,
@@ -46,12 +48,5 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   option: { flex: 1, minHeight: 40, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill },
-  selected: {
-    backgroundColor: colors.surface,
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  },
-});
+  selected: { backgroundColor: colors.surfaceRaised, ...shadow.raised },
+}));

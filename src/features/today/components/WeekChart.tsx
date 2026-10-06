@@ -1,12 +1,14 @@
 import type { Trends } from '@sparshtomar/olive-shared';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { kcal, todayKey, weekdayShort } from '@/lib/format';
-import { Card, Text, colors, radius, space } from '@/ui';
+import { Card, Text, makeStyles, radius, space, useTheme } from '@/ui';
 
 const CHART_HEIGHT = 120;
 
 /** Seven bars against the target line: patterns at a glance, not a spreadsheet. */
 export const WeekChart = ({ trends, selected }: { trends: Trends; selected: string }) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
   const target = trends.days[0]?.target ?? 0;
   const max = Math.max(target * 1.3, ...trends.days.map((d) => d.calories));
   const logged = trends.days.filter((d) => d.logged && d.date !== todayKey());
@@ -49,7 +51,7 @@ export const WeekChart = ({ trends, selected }: { trends: Trends; selected: stri
                   ]}
                 />
               </View>
-              <Text variant="caption" tone={d.date === selected ? 'default' : 'faint'} style={{ fontSize: 11 }}>
+              <Text variant="micro" tone={d.date === selected ? 'default' : 'faint'}>
                 {weekdayShort(d.date).slice(0, 2)}
               </Text>
             </View>
@@ -60,7 +62,7 @@ export const WeekChart = ({ trends, selected }: { trends: Trends; selected: stri
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   chart: { flexDirection: 'row', gap: space.sm, position: 'relative' },
   targetLine: {
@@ -76,4 +78,4 @@ const styles = StyleSheet.create({
   barArea: { height: CHART_HEIGHT, width: '100%', alignItems: 'center', justifyContent: 'flex-end' },
   bar: { width: '70%', maxWidth: 28, borderRadius: radius.sm },
   barSelected: { borderWidth: 2, borderColor: colors.text },
-});
+}));

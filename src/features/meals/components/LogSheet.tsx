@@ -1,13 +1,26 @@
 import { MEAL_SLOTS, MEAL_SLOT_LABEL, slotForTime, type MealSlot } from '@sparshtomar/olive-shared';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Linking, StyleSheet, View } from 'react-native';
+import { Linking, View } from 'react-native';
 import type { MealCapture } from '@/api';
 import { relativeDay, todayKey } from '@/lib/format';
 import { haptics } from '@/lib/haptics';
 import { useIsOnline } from '@/lib/network';
 import { pickPhoto } from '@/lib/photos';
-import { Button, Chip, Field, PressableScale, Sheet, StateView, Text, colors, radius, space } from '@/ui';
+import {
+  Button,
+  Chip,
+  Field,
+  PressableScale,
+  Sheet,
+  StateView,
+  Text,
+  alpha,
+  makeStyles,
+  radius,
+  space,
+  useTheme,
+} from '@/ui';
 import { Camera, ImageIcon, Keyboard, Mic, WifiOff, type LucideIcon } from '@/ui/icons';
 import { useLogSheet } from '../stores/log-sheet';
 import { useMealDraft } from '../stores/meal-draft';
@@ -21,6 +34,8 @@ export const LogSheet = () => {
   const { open, hide, slot: presetSlot, date, startWithText } = useLogSheet();
   const startDraft = useMealDraft((s) => s.start);
   const online = useIsOnline();
+  const { colors } = useTheme();
+  const styles = useStyles();
   const [mode, setMode] = useState<Mode>('choose');
   const [slot, setSlot] = useState<MealSlot>(slotForTime(new Date()));
   const [text, setText] = useState('');
@@ -151,26 +166,30 @@ const Tile = ({
   hint: string;
   onPress: () => void;
   primary?: boolean;
-}) => (
-  <PressableScale
-    onPress={onPress}
-    style={[styles.tile, primary && styles.tilePrimary]}
-    accessibilityRole="button"
-    accessibilityLabel={`${title}. ${hint}`}
-  >
-    <View style={[styles.tileIcon, primary && { backgroundColor: 'rgba(255,255,255,0.18)' }]}>
-      <Icon size={22} color={primary ? colors.textOnPrimary : colors.primary} strokeWidth={2.2} />
-    </View>
-    <Text variant="bodyStrong" style={primary ? { color: colors.textOnPrimary } : undefined}>
-      {title}
-    </Text>
-    <Text variant="caption" style={{ color: primary ? 'rgba(255,255,255,0.8)' : colors.textMuted }}>
-      {hint}
-    </Text>
-  </PressableScale>
-);
+}) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
+  return (
+    <PressableScale
+      onPress={onPress}
+      style={[styles.tile, primary && styles.tilePrimary]}
+      accessibilityRole="button"
+      accessibilityLabel={`${title}. ${hint}`}
+    >
+      <View style={[styles.tileIcon, primary && { backgroundColor: alpha(colors.textOnPrimary, 0.18) }]}>
+        <Icon size={22} color={primary ? colors.textOnPrimary : colors.primary} strokeWidth={2.2} />
+      </View>
+      <Text variant="bodyStrong" tone={primary ? 'inverse' : 'default'}>
+        {title}
+      </Text>
+      <Text variant="caption" style={{ color: primary ? alpha(colors.textOnPrimary, 0.8) : colors.textMuted }}>
+        {hint}
+      </Text>
+    </PressableScale>
+  );
+};
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   wrapRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
   tile: {
@@ -194,4 +213,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: space.sm,
   },
-});
+}));

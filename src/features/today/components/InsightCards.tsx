@@ -1,16 +1,17 @@
 import type { Insight, InsightTone } from '@sparshtomar/olive-shared';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Skeleton, Text, colors, radius, space } from '@/ui';
+import { Skeleton, Text, alpha, radius, space, useTheme, type ColorToken } from '@/ui';
 import { Lightbulb, Sparkles, TrendingUp, type LucideIcon } from '@/ui/icons';
 
-const TONE: Record<InsightTone, { icon: LucideIcon; bg: string; fg: string }> = {
-  positive: { icon: Sparkles, bg: colors.primarySoft, fg: colors.primary },
-  nudge: { icon: TrendingUp, bg: colors.warmSoft, fg: colors.warm },
-  info: { icon: Lightbulb, bg: colors.infoSoft, fg: colors.fat },
+const TONE: Record<InsightTone, { icon: LucideIcon; bg: ColorToken; fg: ColorToken }> = {
+  positive: { icon: Sparkles, bg: 'primarySoft', fg: 'primary' },
+  nudge: { icon: TrendingUp, bg: 'warmSoft', fg: 'warm' },
+  info: { icon: Lightbulb, bg: 'infoSoft', fg: 'info' },
 };
 
 export const InsightCards = ({ insights, loading }: { insights?: Insight[]; loading: boolean }) => {
+  const { colors } = useTheme();
   if (loading && !insights) {
     return (
       <View style={{ gap: space.sm }}>
@@ -31,14 +32,14 @@ export const InsightCards = ({ insights, loading }: { insights?: Insight[]; load
           <Animated.View
             key={insight.id}
             entering={FadeInDown.delay(i * 80)}
-            style={[styles.card, { backgroundColor: bg }]}
+            style={[styles.card, { backgroundColor: colors[bg] }]}
           >
-            <View style={[styles.icon, { backgroundColor: 'rgba(255,255,255,0.7)' }]}>
-              <Icon size={18} color={fg} strokeWidth={2.2} />
+            <View style={[styles.icon, { backgroundColor: alpha(colors.surface, 0.7) }]}>
+              <Icon size={18} color={colors[fg]} strokeWidth={2.2} />
             </View>
             <View style={{ flex: 1, gap: 2 }}>
               <Text variant="bodyStrong">{insight.title}</Text>
-              <Text variant="caption" style={{ color: colors.text, opacity: 0.8 }}>
+              <Text variant="caption" style={{ opacity: 0.8 }}>
                 {insight.body}
               </Text>
             </View>

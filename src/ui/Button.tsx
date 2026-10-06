@@ -2,15 +2,16 @@ import { ActivityIndicator, StyleSheet, View, type StyleProp, type ViewStyle } f
 import type { LucideIcon } from './icons';
 import { PressableScale } from './PressableScale';
 import { Text } from './Text';
-import { colors, radius, space } from './theme';
+import { radius, space, type ColorToken } from './theme';
+import { useTheme } from './use-theme';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
-const variants: Record<Variant, { bg: string; fg: string; border?: string }> = {
-  primary: { bg: colors.primary, fg: colors.textOnPrimary },
-  secondary: { bg: colors.primarySoft, fg: colors.primary },
-  ghost: { bg: 'transparent', fg: colors.text, border: colors.borderStrong },
-  danger: { bg: colors.dangerSoft, fg: colors.danger },
+const variants: Record<Variant, { bg: ColorToken | 'transparent'; fg: ColorToken; border?: ColorToken }> = {
+  primary: { bg: 'primary', fg: 'textOnPrimary' },
+  secondary: { bg: 'primarySoft', fg: 'primary' },
+  ghost: { bg: 'transparent', fg: 'text', border: 'borderStrong' },
+  danger: { bg: 'dangerSoft', fg: 'danger' },
 };
 
 export interface ButtonProps {
@@ -38,7 +39,10 @@ export const Button = ({
   style,
   accessibilityHint,
 }: ButtonProps) => {
+  const { colors } = useTheme();
   const v = variants[variant];
+  const bg = v.bg === 'transparent' ? 'transparent' : colors[v.bg];
+  const fg = colors[v.fg];
   const inactive = disabled || loading;
   return (
     <PressableScale
@@ -51,18 +55,18 @@ export const Button = ({
       style={[
         styles.base,
         size === 'lg' ? styles.lg : styles.md,
-        { backgroundColor: v.bg, borderColor: v.border ?? v.bg },
+        { backgroundColor: bg, borderColor: v.border ? colors[v.border] : bg },
         fullWidth && styles.full,
         disabled && styles.disabled,
         style,
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={v.fg} />
+        <ActivityIndicator color={fg} />
       ) : (
         <View style={styles.row}>
-          {Icon ? <Icon size={size === 'lg' ? 20 : 18} color={v.fg} strokeWidth={2.2} /> : null}
-          <Text variant="label" style={{ color: v.fg, fontSize: size === 'lg' ? 16 : 14 }}>
+          {Icon ? <Icon size={size === 'lg' ? 20 : 18} color={fg} strokeWidth={2.2} /> : null}
+          <Text variant={size === 'lg' ? 'buttonLarge' : 'button'} style={{ color: fg }}>
             {label}
           </Text>
         </View>

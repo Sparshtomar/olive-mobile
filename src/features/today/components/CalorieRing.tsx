@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { kcal } from '@/lib/format';
-import { Text, colors } from '@/ui';
+import { Text, useTheme } from '@/ui';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -18,6 +18,7 @@ export interface CalorieRingProps {
  * the copy factual — being 80 kcal over is information, not failure.
  */
 export const CalorieRing = ({ eaten, target, size = 188 }: CalorieRingProps) => {
+  const { colors } = useTheme();
   const stroke = 16;
   const r = (size - stroke) / 2;
   const circumference = 2 * Math.PI * r;

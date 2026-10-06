@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, View } from 'react-native';
 import Animated, {
   Easing,
   FadeIn,
@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import type { MealCapture } from '@/api';
-import { Olive, Skeleton, Text, colors, radius, space } from '@/ui';
+import { Olive, Skeleton, Text, makeStyles, media, radius, space } from '@/ui';
 
 const MESSAGES: Record<MealCapture['kind'], string[]> = {
   photo: ['Looking at your plate…', 'Spotting each dish…', 'Estimating portions…', 'Checking for hidden ghee…'],
@@ -20,6 +20,7 @@ const MESSAGES: Record<MealCapture['kind'], string[]> = {
 
 /** Keeps the 3–8 s of analysis feeling alive: a scanning line, rotating copy, and the shape of what's coming. */
 export const AnalyzingView = ({ capture }: { capture: MealCapture }) => {
+  const styles = useStyles();
   const [index, setIndex] = useState(0);
   const messages = MESSAGES[capture.kind];
   const scan = useSharedValue(0);
@@ -76,18 +77,18 @@ export const AnalyzingView = ({ capture }: { capture: MealCapture }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   wrap: { gap: space.xl, alignItems: 'center' },
   photoWrap: { width: '100%', aspectRatio: 4 / 3, borderRadius: radius.lg, overflow: 'hidden' },
   photo: { width: '100%', height: '100%' },
-  tint: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(79,122,90,0.12)' },
+  tint: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: media.tint },
   scanLine: {
     position: 'absolute',
     left: 0,
     right: 0,
     height: 3,
-    backgroundColor: colors.primarySoft,
-    shadowColor: colors.primary,
+    backgroundColor: media.scanLine,
+    shadowColor: media.glow,
     shadowOpacity: 0.9,
     shadowRadius: 10,
     elevation: 4,
@@ -104,4 +105,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-});
+}));

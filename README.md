@@ -66,20 +66,21 @@ Server data shared by several features (the user, a day's summary) lives in `api
 - **One contract with the server:** schemas, nutrition targets and lab-marker logic come from [`@sparshtomar/olive-shared`](https://www.npmjs.com/package/@sparshtomar/olive-shared), published from the server repo. Forms validate with the same schemas the API uses, and the report review screen shows High/Low chips live while you edit values, using the exact logic the server stores.
 - **Server state:** TanStack Query, persisted to AsyncStorage. The app opens instantly with last-known data, and works read-only offline.
 - **Adaptive UI:** one `Sheet` component is a draggable bottom sheet on phones and a centred dialog on wide screens; navigation is a floating tab bar on phones and a sidebar on desktop.
+- **Light and dark themes:** the app follows the system setting. Colour tokens come in a light and a dark palette (`ui/theme.ts`), type styles live in `ui/typography.ts`, and components read the active theme through `useTheme()` and `makeStyles()`. A test keeps body text at WCAG AA contrast in both palettes.
 - **Bundle discipline:** icons are imported per-file (Metro doesn't tree-shake; the package root pulled ~1,500 icons), fonts per-weight, photos resized on-device before upload, APK built for arm64 with R8 + resource shrinking.
 
 ### Architecture rules (enforced, not just documented)
 
-| Rule                                                                                       | Enforced by                                                                 |
-| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| Layers: `app → features → api → lib`; `ui` is domain-free                                  | ESLint `no-restricted-imports` ([eslint.config.mjs](eslint.config.mjs))     |
-| A feature is used only through its `index.ts`; relative imports never leave a feature      | ESLint                                                                      |
-| Only `src/api` talks to the HTTP client; screens never fetch                               | ESLint                                                                      |
-| No import cycles                                                                           | ESLint `import/no-cycle`                                                    |
-| No `any`, no `@ts-ignore`, no floating promises, no `console`, no file over 300 lines      | ESLint + `strict` TypeScript                                                |
-| Colours come from design tokens                                                            | ESLint (no hex literals outside `ui/theme.ts`)                              |
-| Feature anatomy, thin routes, naming, no `helpers`/`utils` grab-bags, no `V2`/`Old` copies | Architecture tests ([test/architecture.test.ts](test/architecture.test.ts)) |
-| No unused files, exports or dependencies                                                   | knip                                                                        |
+| Rule                                                                                       | Enforced by                                                                       |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| Layers: `app → features → api → lib`; `ui` is domain-free                                  | ESLint `no-restricted-imports` ([eslint.config.mjs](eslint.config.mjs))           |
+| A feature is used only through its `index.ts`; relative imports never leave a feature      | ESLint                                                                            |
+| Only `src/api` talks to the HTTP client; screens never fetch                               | ESLint                                                                            |
+| No import cycles                                                                           | ESLint `import/no-cycle`                                                          |
+| No `any`, no `@ts-ignore`, no floating promises, no `console`, no file over 300 lines      | ESLint + `strict` TypeScript                                                      |
+| Colours come from design tokens and follow the active theme                                | ESLint (no hex or rgb literals outside `ui/theme.ts`; no direct `useColorScheme`) |
+| Feature anatomy, thin routes, naming, no `helpers`/`utils` grab-bags, no `V2`/`Old` copies | Architecture tests ([test/architecture.test.ts](test/architecture.test.ts))       |
+| No unused files, exports or dependencies                                                   | knip                                                                              |
 
 Every rule runs on commit (lint-staged), on push (typecheck + knip) and in [CI](.github/workflows/ci.yml), which also runs the tests and bundles the Android JavaScript. There are no baselines or grandfathered violations.
 
@@ -120,4 +121,4 @@ The tests cover the logic behind the review screens (portion steps, calorie over
 
 ## What I'd do next
 
-Real auth (JWT behind the existing `current-user` plugin) · push reminders tuned to each user's usual meal times · "repeat yesterday's breakfast" quick-log · weekly email summary · sending the lab report to a doctor · dark mode.
+Real auth (JWT behind the existing `current-user` plugin) · push reminders tuned to each user's usual meal times · "repeat yesterday's breakfast" quick-log · weekly email summary · sending the lab report to a doctor · an in-app light/dark override.

@@ -10,7 +10,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Circle, Ellipse, G, Path } from 'react-native-svg';
-import { colors, mascot } from './theme';
+import { mascot } from './theme';
+import { useTheme } from './use-theme';
 
 export type OliveMood = 'happy' | 'proud' | 'sleepy' | 'curious' | 'concerned';
 
@@ -36,6 +37,7 @@ export interface OliveProps {
  * hidden from screen readers; the copy next to it carries the meaning.
  */
 export const Olive = ({ mood = 'happy', size = 96, animated = true }: OliveProps) => {
+  const { colors } = useTheme();
   const bob = useSharedValue(0);
   const blink = useSharedValue(1);
 
@@ -60,7 +62,7 @@ export const Olive = ({ mood = 'happy', size = 96, animated = true }: OliveProps
     >
       <Svg width={size} height={size} viewBox="0 0 100 100">
         {/* sprout */}
-        <Path d="M50 22 C50 14 52 9 56 6" stroke={colors.primary} strokeWidth={3} strokeLinecap="round" fill="none" />
+        <Path d="M50 22 C50 14 52 9 56 6" stroke={mascot.stem} strokeWidth={3} strokeLinecap="round" fill="none" />
         <Path d="M55 8 C62 2 72 4 74 9 C68 14 60 13 55 8 Z" fill={mascot.leaf} />
         <Path d="M50 16 C44 9 35 10 33 15 C39 20 46 19 50 16 Z" fill={mascot.leafLight} />
         {/* body */}
@@ -78,12 +80,12 @@ export const Olive = ({ mood = 'happy', size = 96, animated = true }: OliveProps
         <Ellipse cx={70} cy={64} rx={6} ry={3.5} fill={mascot.cheek} opacity={0.55} />
         {/* eyes */}
         {eyesClosed ? (
-          <G stroke={colors.text} strokeWidth={2.6} strokeLinecap="round" fill="none">
+          <G stroke={mascot.ink} strokeWidth={2.6} strokeLinecap="round" fill="none">
             <Path d="M33 55 Q38 59 43 55" />
             <Path d="M57 55 Q62 59 67 55" />
           </G>
         ) : (
-          <G fill={colors.text}>
+          <G fill={mascot.ink}>
             <AnimatedEllipse cx={38} cy={55} rx={4.5} animatedProps={eyeProps} />
             <AnimatedEllipse cx={62} cy={55} rx={4.5} animatedProps={eyeProps} />
             <Circle cx={39.5} cy={53} r={1.4} fill={mascot.eyeGlint} />
@@ -91,7 +93,7 @@ export const Olive = ({ mood = 'happy', size = 96, animated = true }: OliveProps
           </G>
         )}
         {mood === 'concerned' ? (
-          <G stroke={colors.text} strokeWidth={2} strokeLinecap="round">
+          <G stroke={mascot.ink} strokeWidth={2} strokeLinecap="round">
             <Path d="M32 45 L42 47" />
             <Path d="M68 45 L58 47" />
           </G>
@@ -99,13 +101,15 @@ export const Olive = ({ mood = 'happy', size = 96, animated = true }: OliveProps
         {/* mouth */}
         <Path
           d={MOUTH[mood]}
-          stroke={colors.text}
+          stroke={mascot.ink}
           strokeWidth={2.6}
           strokeLinecap="round"
           strokeLinejoin="round"
           fill={mood === 'proud' ? mascot.mouth : 'none'}
         />
-        {mood === 'proud' ? <Path d="M84 22 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 Z" fill={colors.carbs} /> : null}
+        {mood === 'proud' ? (
+          <Path d="M84 22 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 Z" fill={mascot.sparkle} />
+        ) : null}
         {mood === 'sleepy' ? (
           <Path
             d="M76 30 h7 l-7 8 h7"

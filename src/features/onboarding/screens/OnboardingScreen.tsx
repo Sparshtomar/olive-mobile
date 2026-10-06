@@ -1,6 +1,6 @@
 import { profileFieldsSchema, type ProfileInput } from '@sparshtomar/olive-shared';
 import { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, type TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, type TextInput, View } from 'react-native';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCreateDemoUser, useCreateUser } from '@/api';
@@ -8,13 +8,14 @@ import { ActivityPicker, GoalPicker, TargetPreview } from '@/features/goal';
 import { errorMessage } from '@/lib/errors';
 import { haptics } from '@/lib/haptics';
 import { useIsOnline } from '@/lib/network';
-import { Button, Field, IconButton, Olive, Segmented, Text, colors, space, toast, useLayout } from '@/ui';
+import { Button, Field, IconButton, Olive, Segmented, Text, makeStyles, space, toast, useLayout } from '@/ui';
 import { ArrowLeft, Sparkles } from '@/ui/icons';
 import { STEPS, parseNumber, validateStep, type Draft, type FieldErrors, type Step } from '../lib/steps';
 
 export const OnboardingScreen = () => {
   const insets = useSafeAreaInsets();
   const { isWide } = useLayout();
+  const styles = useStyles();
   const online = useIsOnline();
   const [step, setStep] = useState<Step>('intro');
   const [draft, setDraft] = useState<Draft>({});
@@ -94,7 +95,7 @@ export const OnboardingScreen = () => {
             {step === 'intro' ? (
               <View style={styles.intro}>
                 <Olive size={150} mood="happy" />
-                <Text variant="title" align="center" style={{ fontSize: 32, lineHeight: 38 }}>
+                <Text variant="display" align="center">
                   Hi, I'm Olive
                 </Text>
                 <Text tone="muted" align="center" style={{ maxWidth: 340 }}>
@@ -260,7 +261,7 @@ const Heading = ({ title, subtitle }: { title: string; subtitle?: string }) => (
   </View>
 );
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   root: { flex: 1, backgroundColor: colors.bg },
   frame: { flex: 1, width: '100%', alignSelf: 'center', paddingHorizontal: space.xl },
   frameWide: { maxWidth: 520 },
@@ -271,4 +272,4 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, paddingBottom: space.xl },
   intro: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space.md },
   footer: { gap: space.sm, paddingTop: space.md },
-});
+}));

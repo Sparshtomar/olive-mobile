@@ -1,9 +1,10 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { haptics } from '@/lib/haptics';
 import type { LucideIcon } from './icons';
 import { PressableScale } from './PressableScale';
 import { Text } from './Text';
-import { colors, radius, space } from './theme';
+import { radius, space } from './theme';
+import { makeStyles, useTheme } from './use-theme';
 
 export interface OptionCardProps {
   title: string;
@@ -14,35 +15,39 @@ export interface OptionCardProps {
 }
 
 /** Large tappable choice with a title and explanation — for decisions that need context. */
-export const OptionCard = ({ title, hint, icon: Icon, selected, onPress }: OptionCardProps) => (
-  <PressableScale
-    onPress={() => {
-      haptics.tap();
-      onPress();
-    }}
-    accessibilityRole="radio"
-    accessibilityState={{ checked: selected }}
-    accessibilityLabel={hint ? `${title}. ${hint}` : title}
-    style={[styles.card, selected && styles.selected]}
-  >
-    {Icon ? (
-      <View style={[styles.icon, selected && { backgroundColor: colors.primary }]}>
-        <Icon size={20} color={selected ? colors.textOnPrimary : colors.primary} strokeWidth={2} />
-      </View>
-    ) : null}
-    <View style={{ flex: 1 }}>
-      <Text variant="bodyStrong">{title}</Text>
-      {hint ? (
-        <Text variant="caption" tone="muted">
-          {hint}
-        </Text>
+export const OptionCard = ({ title, hint, icon: Icon, selected, onPress }: OptionCardProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
+  return (
+    <PressableScale
+      onPress={() => {
+        haptics.tap();
+        onPress();
+      }}
+      accessibilityRole="radio"
+      accessibilityState={{ checked: selected }}
+      accessibilityLabel={hint ? `${title}. ${hint}` : title}
+      style={[styles.card, selected && styles.selected]}
+    >
+      {Icon ? (
+        <View style={[styles.icon, selected && { backgroundColor: colors.primary }]}>
+          <Icon size={20} color={selected ? colors.textOnPrimary : colors.primary} strokeWidth={2} />
+        </View>
       ) : null}
-    </View>
-    <View style={[styles.radio, selected && styles.radioOn]}>{selected ? <View style={styles.dot} /> : null}</View>
-  </PressableScale>
-);
+      <View style={{ flex: 1 }}>
+        <Text variant="bodyStrong">{title}</Text>
+        {hint ? (
+          <Text variant="caption" tone="muted">
+            {hint}
+          </Text>
+        ) : null}
+      </View>
+      <View style={[styles.radio, selected && styles.radioOn]}>{selected ? <View style={styles.dot} /> : null}</View>
+    </PressableScale>
+  );
+};
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -73,4 +78,4 @@ const styles = StyleSheet.create({
   },
   radioOn: { borderColor: colors.primary },
   dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary },
-});
+}));

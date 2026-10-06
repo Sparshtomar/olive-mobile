@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import type { DimensionValue, StyleProp, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
-import { colors, radius } from './theme';
+import { radius } from './theme';
+import { useTheme } from './use-theme';
 
 export interface SkeletonProps {
   width?: DimensionValue;
@@ -12,6 +13,7 @@ export interface SkeletonProps {
 
 /** Placeholder that breathes while content loads — shaped like what's coming. */
 export const Skeleton = ({ width = '100%', height = 16, rounded = radius.sm, style }: SkeletonProps) => {
+  const { colors } = useTheme();
   const opacity = useSharedValue(0.5);
   useEffect(() => {
     opacity.value = withRepeat(withTiming(1, { duration: 800 }), -1, true);

@@ -7,8 +7,9 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { IconButton } from './IconButton';
 import { X } from './icons';
 import { Text } from './Text';
-import { colors, radius, shadow, space } from './theme';
+import { radius, space } from './theme';
 import { useLayout } from './use-layout';
+import { makeStyles } from './use-theme';
 
 export interface SheetProps {
   visible: boolean;
@@ -30,6 +31,7 @@ const DISMISS_VELOCITY = 900;
 export const Sheet = ({ visible, onClose, title, subtitle, children, dismissible = true }: SheetProps) => {
   const { isWide, height } = useLayout();
   const insets = useSafeAreaInsets();
+  const styles = useStyles();
   // Stay mounted while the exit animation plays.
   const [mounted, setMounted] = useState(visible);
   const progress = useSharedValue(0);
@@ -137,7 +139,7 @@ export const Sheet = ({ visible, onClose, title, subtitle, children, dismissible
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors, shadow }) => ({
   backdrop: { backgroundColor: colors.overlay },
   sheetWrap: { flex: 1, justifyContent: 'flex-end' },
   sheet: {
@@ -174,4 +176,4 @@ const styles = StyleSheet.create({
     paddingBottom: space.xl,
     ...shadow.floating,
   },
-});
+}));

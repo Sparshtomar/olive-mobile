@@ -1,8 +1,8 @@
 import { fromDateKey, lastNDays, type TrendDay } from '@sparshtomar/olive-shared';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { relativeDay, todayKey, weekdayShort } from '@/lib/format';
 import { haptics } from '@/lib/haptics';
-import { PressableScale, Text, colors, radius, space } from '@/ui';
+import { PressableScale, Text, alpha, makeStyles, radius, space, useTheme } from '@/ui';
 
 export interface DateStripProps {
   selected: string;
@@ -12,6 +12,8 @@ export interface DateStripProps {
 
 /** The last 7 days, each with a dot showing how it went. */
 export const DateStrip = ({ selected, onSelect, days }: DateStripProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
   const today = todayKey();
   const byDate = new Map(days?.map((d) => [d.date, d]));
   return (
@@ -32,10 +34,10 @@ export const DateStrip = ({ selected, onSelect, days }: DateStripProps) => {
             accessibilityState={{ selected: isSelected }}
             accessibilityLabel={`${relativeDay(date)}${d?.logged ? `, ${d.calories} calories` : ', nothing logged'}`}
           >
-            <Text variant="caption" style={{ color: isSelected ? 'rgba(255,255,255,0.8)' : colors.textMuted }}>
+            <Text variant="caption" style={{ color: isSelected ? alpha(colors.textOnPrimary, 0.8) : colors.textMuted }}>
               {date === today ? 'Today' : weekdayShort(date)}
             </Text>
-            <Text variant="bodyStrong" style={{ color: isSelected ? colors.textOnPrimary : colors.text }}>
+            <Text variant="bodyStrong" tone={isSelected ? 'inverse' : 'default'}>
               {fromDateKey(date).getDate()}
             </Text>
             <View
@@ -52,9 +54,9 @@ export const DateStrip = ({ selected, onSelect, days }: DateStripProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(({ colors }) => ({
   row: { flexDirection: 'row', gap: space.xs, justifyContent: 'space-between' },
   day: { flex: 1, alignItems: 'center', paddingVertical: space.sm, borderRadius: radius.md, gap: 2, maxWidth: 64 },
   selected: { backgroundColor: colors.primary },
   dot: { width: 6, height: 6, borderRadius: 3 },
-});
+}));
