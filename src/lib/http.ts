@@ -1,4 +1,6 @@
 import { USER_ID_HEADER, type ApiErrorBody } from '@sparshtomar/olive-shared';
+import { fetch } from 'expo/fetch';
+import { File } from 'expo-file-system';
 import { Platform } from 'react-native';
 import { ApiError } from './api-error';
 import { API_URL } from './config';
@@ -23,7 +25,7 @@ export const request = async <T>(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  let response: Response;
+  let response: Awaited<ReturnType<typeof fetch>>;
   try {
     response = await fetch(`${API_URL}${path}`, {
       method,
@@ -57,7 +59,11 @@ export const appendFile = async (form: FormData, field: string, file: { uri: str
     const blob = await (await fetch(file.uri)).blob();
     form.append(field, blob, file.name);
   } else {
-    // React Native's FormData streams the file from disk given { uri, name, type }.
-    form.append(field, file as unknown as Blob);
+    // expo/fetch serialises a part that is a string, a Blob, or an object with `bytes()`. React
+    // Native's `{ uri }` parts are not accepted, and this SDK's File has arrayBuffer() but not
+    // bytes(), so read the file and hand over the smallest object the serialiser understands.
+    const bytes = new Uint8Array(await new File(file.uri).arrayBuffer());
+    const part = { name: file.name, type: file.type, size: bytes.byteLength, bytes: async () => bytes };
+    form.append(field, part as unknown as Blob, file.name);
   }
 };
