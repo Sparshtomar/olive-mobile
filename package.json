@@ -18,6 +18,10 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "check:coverage": "node scripts/check-coverage.mjs",
+    "check:audit": "node scripts/check-audit.mjs",
+    "check:licenses": "node scripts/check-licenses.mjs",
     "knip": "knip",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run knip && npm test",
     "prepare": "husky"
@@ -72,6 +76,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "@types/react": "~19.2.2",
+    "@vitest/coverage-v8": "^5.0.3",
     "eslint": "^9.39.5",
     "eslint-config-expo": "~57.0.2",
     "eslint-import-resolver-typescript": "^4.4.5",

@@ -1,0 +1,47 @@
+# Weekly dependency review: everything that changes because somebody else published
+# something, rather than because we changed something — which is why none of it gates a
+# pull request.
+#
+# GitHub emails the last actor on a failed scheduled run. A red run is meant to be
+# actionable: scripts/check-audit.mjs only fails on an advisory that is new or whose review
+# date has passed, so red always means there is a decision to make.
+name: Dependency audit
+
+on:
+  schedule:
+    # Mondays, 04:00 UTC — 09:30 IST, waiting at the start of the week.
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Vulnerabilities, licences, SDK health
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      # High/critical in the production tree, minus what is accepted with a written reason and a review date.
+      - name: Vulnerabilities
+        if: ${{ !cancelled() }}
+        run: npm run check:audit -- --all
+
+      # Copyleft in the shipped tree. The APK is distributed software, so this is a licence obligation question.
+      - name: Licences
+        if: ${{ !cancelled() }}
+        run: npm run check:licenses -- --all
+
+      # Informational: expo-doctor reports things that need an SDK upgrade to clear. The
+      # blocking half of what it covers — version alignment — is `expo install --check` in ci.yml.
+      - name: expo-doctor
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: npx expo-doctor

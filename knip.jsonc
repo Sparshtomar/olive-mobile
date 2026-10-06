@@ -3,6 +3,6 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   // An export used inside its own file is a deliberate unit, not dead code.
   "ignoreExportsUsedInFile": true,
-  "entry": ["src/app/**/*.tsx"],
+  "entry": ["src/app/**/*.tsx", "scripts/*.mjs"],
   "project": ["src/**/*.{ts,tsx}", "test/**/*.ts"],
 }

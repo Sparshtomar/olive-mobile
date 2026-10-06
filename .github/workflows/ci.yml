@@ -1,12 +1,27 @@
-# Every gate a change must pass. The same commands run locally via `npm run check`.
+# The gate on every pull request. Most of this also runs locally (`npm run check`, and the
+# husky hooks), so in the normal case the job confirms what the author already saw. Its real
+# work is what a hook cannot cover:
+#
+#   * `npm ci` on a clean checkout — the only proof the lockfile resolves, and it cannot be
+#     skipped with --no-verify.
+#   * Expo SDK alignment, which needs to ask Expo what SDK 57 expects.
+#   * Diff coverage, which needs a merge-base against the PR's target branch.
+#   * The bundle budget, which needs the exported Hermes bytecode.
+#
+# Deliberately not here: `npm audit`, the licence scan, expo-doctor. Those change when
+# somebody else publishes something, not when this PR changed something, and a gate that
+# fails for reasons the author did not cause is a gate that gets deleted. They run weekly —
+# see dependency-audit.yml.
 name: CI
 
 on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
+  # Per-branch, and cancel superseded runs: a force-pushed fixup should not leave two runs racing.
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
@@ -15,26 +30,65 @@ permissions:
 
 jobs:
   quality:
-    name: Format, lint, types, dead code, tests
+    name: Format, lint, types, dead code, tests, diff coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       # Actions are pinned to commit SHAs so a moved tag can't change what runs.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: diff coverage needs a real merge-base with the PR's target branch.
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
-      - run: npm run format:check
-      # Includes the architecture rules: layer boundaries, feature public APIs, no import cycles.
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run knip
-      - run: npm test
+
+      # THE dependency gate: refuses to install when package.json and the lockfile disagree.
+      - name: Install from the lockfile
+        run: npm ci
+
+      # Each check runs even if an earlier one failed, so one push reports every problem
+      # instead of one problem per push. `!cancelled()` rather than `always()`: a cancelled
+      # run should stop.
+      - name: Format
+        if: ${{ !cancelled() }}
+        run: npm run format:check
+
+      # Includes the architecture rules: layer boundaries, feature public APIs, no import cycles, colour tokens only.
+      - name: Lint
+        if: ${{ !cancelled() }}
+        run: npm run lint
+
+      - name: Typecheck
+        if: ${{ !cancelled() }}
+        run: npm run typecheck
+
+      - name: Dead code and unused dependencies
+        if: ${{ !cancelled() }}
+        run: npm run knip
+
+      # --coverage so the diff-coverage step has something to read without running the suite twice.
+      - name: Tests
+        if: ${{ !cancelled() }}
+        run: npm run test:coverage
+
+      # Were the lines THIS pull request changed covered by a test? Per-diff rather than a
+      # repo-wide threshold: existing code is not the standard, new code is. See
+      # scripts/check-coverage.mjs. Skipped on a push to main — there is no PR base to diff
+      # against, and the check already ran on the PR that produced the merge.
+      - name: Diff coverage
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        run: npm run check:coverage -- --base origin/${{ github.base_ref }}
 
   build:
-    name: Android bundle
+    name: Expo SDK alignment and Android bundle
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # The JavaScript the APK ships, in bytes. Hermes bytecode is ~5.2 MB today; the budget
+      # is a tripwire for an accidental import of a whole icon pack or a fat polyfill.
+      BUNDLE_BUDGET_BYTES: 7000000
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -42,7 +96,31 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+
+      # Expo pins a compatible version of every expo-* package and the react-native native
+      # ecosystem per SDK. A package outside that range installs and typechecks fine, then
+      # misbehaves in a native build — the one thing nothing else here can see. Retried
+      # because it queries the Expo API: a flaky network should not turn a PR red.
       - name: Expo SDK dependency versions are aligned
-        run: npx expo install --check
+        run: |
+          for attempt in 1 2 3; do
+            if npx expo install --check; then exit 0; fi
+            echo "::warning::attempt $attempt failed"
+            sleep $((attempt * 10))
+          done
+          echo "::error::expo install --check failed after 3 attempts. If the versions really are wrong, \`npx expo install --fix\` writes the SDK-compatible ones."
+          exit 1
+
       # Bundles the exact JavaScript the APK ships, without needing the Android toolchain.
-      - run: npx expo export --platform android --output-dir dist
+      - name: Android bundle
+        run: npx expo export --platform android --output-dir dist
+
+      - name: Bundle size within budget
+        run: |
+          bundle=$(find dist/_expo/static/js/android -name '*.hbc' | head -1)
+          size=$(stat -c %s "$bundle")
+          echo "Hermes bundle: $((size / 1024)) KB (budget $((BUNDLE_BUDGET_BYTES / 1024)) KB)" | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "$size" -gt "$BUNDLE_BUDGET_BYTES" ]; then
+            echo "::error::Android bundle is $size bytes, over the $BUNDLE_BUDGET_BYTES budget. Check for a root import of an icon pack or font family (see src/ui/icons.ts)."
+            exit 1
+          fi

@@ -81,8 +81,11 @@ Server data shared by several features (the user, a day's summary) lives in `api
 | Colours come from design tokens and follow the active theme                                | ESLint (no hex or rgb literals outside `ui/theme.ts`; no direct `useColorScheme`) |
 | Feature anatomy, thin routes, naming, no `helpers`/`utils` grab-bags, no `V2`/`Old` copies | Architecture tests ([test/architecture.test.ts](test/architecture.test.ts))       |
 | No unused files, exports or dependencies                                                   | knip                                                                              |
+| New logic ships with tests (70% of changed lines, per PR)                                  | Diff coverage ([scripts/check-coverage.mjs](scripts/check-coverage.mjs))          |
+| Android JS bundle stays under 7 MB                                                         | CI budget check on the exported Hermes bundle                                     |
+| No high/critical advisories or copyleft licences in the shipped tree                       | Weekly audit ([dependency-audit.yml](.github/workflows/dependency-audit.yml))     |
 
-Every rule runs on commit (lint-staged), on push (typecheck + knip) and in [CI](.github/workflows/ci.yml), which also runs the tests and bundles the Android JavaScript. There are no baselines or grandfathered violations.
+Every rule runs on commit (lint-staged), on push (typecheck + knip) and in [CI](.github/workflows/ci.yml), which also runs the tests, gates diff coverage, checks Expo SDK alignment and bundles the Android JavaScript against a size budget. Every CI step runs even when an earlier one fails, so one push reports every problem. Checks that change when someone else publishes (vulnerabilities, licences, expo-doctor) run weekly instead of on PRs. There are no baselines or grandfathered violations.
 
 ---
 
