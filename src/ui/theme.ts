@@ -132,7 +132,7 @@ export const themes: Record<ColorScheme, Theme> = {
   dark: { scheme: 'dark', colors: dark, shadow: darkShadow },
 };
 
-/** Olive the mascot's own palette — illustration colours, the same in both schemes. */
+/** Olive the mascot's own palette - illustration colours, the same in both schemes. */
 export const mascot = {
   stem: '#4F9E6A',
   leaf: '#8DD4A0',

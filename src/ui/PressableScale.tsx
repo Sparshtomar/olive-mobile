@@ -9,7 +9,7 @@ export interface PressableScaleProps extends Omit<PressableProps, 'style'> {
   scaleTo?: number;
 }
 
-/** Pressable with a soft spring "give" — the tactile baseline for everything tappable. */
+/** Pressable with a soft spring "give" - the tactile baseline for everything tappable. */
 export const PressableScale = ({
   style,
   scaleTo = 0.97,

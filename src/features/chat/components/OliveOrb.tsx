@@ -21,7 +21,7 @@ export interface OliveOrbProps {
 
 /**
  * Olive as an "AI presence": the mascot on a soft primary disc with a glow that
- * breathes. The entry point to Ask Olive wherever it appears — tab bar, Today, chat.
+ * breathes. The entry point to Ask Olive wherever it appears - tab bar, Today, chat.
  */
 export const OliveOrb = ({ size = 40, animated = true, active = false }: OliveOrbProps) => {
   const { colors } = useTheme();

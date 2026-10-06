@@ -44,7 +44,7 @@ const moodFor = (day: DaySummary, isToday: boolean): { mood: OliveMood; line: st
   if (ratio > 1.15) return { mood: 'concerned', line: 'A heavier day. One day never undoes a good week.' };
   if (ratio >= 0.85)
     return { mood: 'proud', line: isToday ? 'Right on target. Lovely work.' : 'Landed right on target.' };
-  return { mood: 'happy', line: isToday ? 'Good going — plenty of room left.' : 'Under target this day.' };
+  return { mood: 'happy', line: isToday ? 'Good going - plenty of room left.' : 'Under target this day.' };
 };
 
 export const TodayScreen = () => {

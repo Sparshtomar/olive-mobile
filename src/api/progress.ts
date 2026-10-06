@@ -16,7 +16,7 @@ export const useInsights = (today: string) =>
     staleTime: 5 * 60_000,
   });
 
-/** Reads the last known streak from cache without fetching — for celebratory copy right after a save. */
+/** Reads the last known streak from cache without fetching - for celebratory copy right after a save. */
 export const useStreakSnapshot = () => {
   const client = useQueryClient();
   return (today: string) => client.getQueryData<Trends>(qk.trends(today))?.streak ?? 0;

@@ -14,7 +14,7 @@ export interface SkeletonProps {
 
 const SWEEP_MS = 1400;
 
-/** Placeholder with a light sweep while content loads — shaped like what's coming. */
+/** Placeholder with a light sweep while content loads - shaped like what's coming. */
 export const Skeleton = ({ width = '100%', height = 16, rounded = radius.sm, style }: SkeletonProps) => {
   const { colors } = useTheme();
   const [measured, setMeasured] = useState(0);

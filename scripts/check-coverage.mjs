@@ -4,8 +4,8 @@
  *
  * Per-diff rather than repo-wide. The UI is deliberately thin over tested logic (see
  * vitest.config.mts), so repo-wide coverage says little and a global threshold would be
- * either meaningless or unreachable. Per-diff encodes the actual rule — new logic ships
- * with tests — without demanding a backfill first.
+ * either meaningless or unreachable. Per-diff encodes the actual rule - new logic ships
+ * with tests - without demanding a backfill first.
  *
  * Usage
  *   node scripts/check-coverage.mjs                 compare against origin/main
@@ -13,7 +13,7 @@
  *   node scripts/check-coverage.mjs --min 60        override the threshold
  *   node scripts/check-coverage.mjs --report        per-file detail, never fails
  *
- * Expects coverage/coverage-final.json — run `npm run test:coverage` first.
+ * Expects coverage/coverage-final.json - run `npm run test:coverage` first.
  */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -51,7 +51,7 @@ const INSTRUMENTABLE = /\.(ts|tsx|mjs|js)$/;
 
 const COVERAGE_FILE = 'coverage/coverage-final.json';
 if (!fs.existsSync(COVERAGE_FILE)) {
-  console.log(red(`x ${COVERAGE_FILE} not found`) + dim(' — run `npm run test:coverage` first'));
+  console.log(red(`x ${COVERAGE_FILE} not found`) + dim(' - run `npm run test:coverage` first'));
   process.exit(1);
 }
 
@@ -96,7 +96,7 @@ function changedLines(base) {
       file = header[1];
       continue;
     }
-    // @@ -old,n +start,count @@ — count omitted means 1.
+    // @@ -old,n +start,count @@ - count omitted means 1.
     const hunk = /^@@ -\S+ \+(\d+)(?:,(\d+))? @@/.exec(line);
     if (hunk && file) {
       const start = Number(hunk[1]);

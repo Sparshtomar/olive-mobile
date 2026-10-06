@@ -69,7 +69,7 @@ export const FoodItemRow = ({ item, onChange, onRemove }: FoodItemRowProps) => {
             {item.portion}
             {item.grams ? ` · ${Math.round(item.grams * item.quantity)} g` : ''}
           </Text>
-          {unsure ? <Pill label="Olive isn't sure — check the portion" tone="warm" /> : null}
+          {unsure ? <Pill label="Olive isn't sure - check the portion" tone="warm" /> : null}
         </PressableScale>
         <View style={{ alignItems: 'flex-end', gap: space.xs }}>
           <Text variant="subheading">

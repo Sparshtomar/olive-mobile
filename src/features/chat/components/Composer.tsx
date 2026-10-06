@@ -57,7 +57,7 @@ export const Composer = ({ onSend, sending, initialText = '' }: ComposerProps) =
         <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.preview}>
           <Image source={{ uri: image }} style={styles.thumb} accessibilityLabel="Photo to send" />
           <Text variant="caption" tone="muted" style={{ flex: 1 }}>
-            Photo attached — Olive will look at it with your question.
+            Photo attached - Olive will look at it with your question.
           </Text>
           <IconButton icon={X} label="Remove photo" size={30} onPress={() => setImage(null)} />
         </Animated.View>

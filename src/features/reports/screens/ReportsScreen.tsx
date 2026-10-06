@@ -76,7 +76,7 @@ export const ReportsScreen = () => {
             </Text>
             <Text tone="muted" align="center" style={{ maxWidth: 380 }}>
               Upload a recent report. If something like LDL or HbA1c is out of range, Olive tracks the foods that move
-              it — every day, on your Today screen.
+              it - every day, on your Today screen.
             </Text>
             <Button label="Add your first report" icon={Plus} size="lg" onPress={() => setUploadOpen(true)} />
           </Card>

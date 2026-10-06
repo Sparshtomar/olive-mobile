@@ -15,7 +15,7 @@ export interface CalorieRingProps {
 
 /**
  * Remaining calories, front and centre. Going over turns the ring warm (not red) and
- * the copy factual — being 80 kcal over is information, not failure.
+ * the copy factual - being 80 kcal over is information, not failure.
  */
 export const CalorieRing = ({ eaten, target, size = 188 }: CalorieRingProps) => {
   const { colors } = useTheme();

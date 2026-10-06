@@ -19,7 +19,7 @@ const pickProfile = (u: User): ProfileInput => ({
   paceKgPerWeek: u.paceKgPerWeek,
 });
 
-/** Goal editing lives here instead of a profile screen — it's the only setting that matters day to day. */
+/** Goal editing lives here instead of a profile screen - it's the only setting that matters day to day. */
 export const GoalSheet = ({ user, visible, onClose }: { user: User; visible: boolean; onClose: () => void }) => {
   const [draft, setDraft] = useState<ProfileInput>(pickProfile(user));
   const [weightText, setWeightText] = useState(String(user.weightKg));

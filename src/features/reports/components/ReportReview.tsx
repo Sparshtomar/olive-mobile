@@ -38,7 +38,7 @@ interface ReportReviewProps {
   onLeave: () => void;
 }
 
-/** Every extracted value is editable before saving — a misread decimal in health data matters. */
+/** Every extracted value is editable before saving - a misread decimal in health data matters. */
 export const ReportReview = ({ draft, sex, onLeave }: ReportReviewProps) => {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
@@ -135,7 +135,7 @@ export const ReportReview = ({ draft, sex, onLeave }: ReportReviewProps) => {
           accessibilityLabel="Report name"
         />
         <Field
-          label={draft.reportDate ? 'Report date' : "Report date — Olive couldn't find it"}
+          label={draft.reportDate ? 'Report date' : "Report date - Olive couldn't find it"}
           placeholder="YYYY-MM-DD"
           value={date}
           onChangeText={setDate}
@@ -154,7 +154,7 @@ export const ReportReview = ({ draft, sex, onLeave }: ReportReviewProps) => {
                 {f.kind === 'max' ? 'Keep' : 'Get'}{' '}
                 <Text variant="bodyStrong">{NUTRIENT_META[f.nutrient].label.toLowerCase()}</Text>{' '}
                 {f.kind === 'max' ? 'under' : 'to at least'} {f.amount} {NUTRIENT_META[f.nutrient].unit} a day
-                <Text tone="muted"> — for your {f.reasons.map((r) => r.name).join(', ')}</Text>
+                <Text tone="muted"> - for your {f.reasons.map((r) => r.name).join(', ')}</Text>
               </Text>
             ))}
           </Card>

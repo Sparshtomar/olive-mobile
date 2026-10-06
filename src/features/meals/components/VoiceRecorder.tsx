@@ -69,7 +69,7 @@ export const VoiceRecorder = ({ onRecorded, onPermissionDenied, onCancel }: Voic
       await setAudioModeAsync({ allowsRecording: false });
       haptics.tap();
       if (duration < MIN_MILLIS || !recorder.uri) {
-        setError('That was a bit short — hold on and describe your meal.');
+        setError('That was a bit short - hold on and describe your meal.');
         return;
       }
       onRecorded(recorder.uri, Platform.OS === 'web' ? 'audio/webm' : 'audio/mp4');
@@ -97,7 +97,7 @@ export const VoiceRecorder = ({ onRecorded, onPermissionDenied, onCancel }: Voic
       <Text tone="muted" align="center" style={{ maxWidth: 320 }}>
         {state.isRecording
           ? `0:${String(seconds).padStart(2, '0')} / 0:${MAX_SECONDS} · tap to finish`
-          : '"Two rotis, a bowl of dal and some curd" — portions help.'}
+          : '"Two rotis, a bowl of dal and some curd" - portions help.'}
       </Text>
 
       <View style={styles.micArea}>

@@ -89,7 +89,7 @@ export const UploadReportSheet = ({ visible, onClose }: { visible: boolean; onCl
           <Button label="Upload PDF or image" icon={FileText} size="lg" onPress={fromFiles} fullWidth />
           <Button label="Take a photo" icon={Camera} variant="secondary" size="lg" onPress={fromCamera} fullWidth />
           <Text variant="caption" tone="faint" align="center" style={{ marginTop: space.sm }}>
-            Olive reads the values, then you check them before anything is saved. Olive isn't a doctor — talk to yours
+            Olive reads the values, then you check them before anything is saved. Olive isn't a doctor - talk to yours
             about results.
           </Text>
         </View>

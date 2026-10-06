@@ -46,7 +46,7 @@ export default function RootLayout() {
   const finishIntro = useCallback(() => setIntroDone(true), []);
   // Hand off from the OS splash only once our own splash has painted, so there is no flash between them.
   const hideNativeSplash = useCallback(() => void SplashScreen.hideAsync(), []);
-  // A font failure shouldn't brick the app — system fonts are an acceptable fallback.
+  // A font failure shouldn't brick the app - system fonts are an acceptable fallback.
   const ready = (fontsLoaded || !!fontError) && hydrated;
 
   // Start waking the API during the splash screen, not on the user's first tap.

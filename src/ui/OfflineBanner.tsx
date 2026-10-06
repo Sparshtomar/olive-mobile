@@ -22,7 +22,7 @@ export const OfflineBanner = () => {
     >
       <View style={styles.row} accessibilityRole="alert">
         <WifiOff size={16} color={colors.text} />
-        <Text variant="caption">You're offline — showing your saved data.</Text>
+        <Text variant="caption">You're offline - showing your saved data.</Text>
       </View>
     </Animated.View>
   );

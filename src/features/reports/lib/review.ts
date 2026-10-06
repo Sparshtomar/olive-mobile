@@ -12,7 +12,7 @@ export const reportDateError = (date: string, today: string): string | undefined
   return undefined;
 };
 
-/** Tracked markers first — they're the ones that affect the user's day. Stable within each group. */
+/** Tracked markers first - they're the ones that affect the user's day. Stable within each group. */
 export const trackedFirst = <T extends { key: string | null }>(markers: T[]): T[] =>
   [...markers].sort((a, b) => Number(b.key !== null) - Number(a.key !== null));
 

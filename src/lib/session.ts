@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface SessionState {
   userId: string | null;
-  /** False until persisted state has loaded — avoids flashing onboarding on cold start. */
+  /** False until persisted state has loaded - avoids flashing onboarding on cold start. */
   hydrated: boolean;
   signIn: (userId: string) => void;
   signOut: () => void;

@@ -5,7 +5,7 @@ const DEV_API_PORT = 4010;
 
 /**
  * Release builds bake EXPO_PUBLIC_API_URL in at build time. In development the API
- * runs on the same machine as Metro, so we reuse Metro's host — that makes a
+ * runs on the same machine as Metro, so we reuse Metro's host - that makes a
  * physical phone on the same Wi-Fi work with zero config.
  */
 const resolveApiUrl = (): string => {

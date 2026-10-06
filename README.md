@@ -22,7 +22,7 @@ Runs on **Android, iOS and the web** (desktop gets a sidebar and dialogs, phones
 | **2. Log a meal**: photo / voice / text → AI → **review** → save | The habit loop. Most of the polish went here. AI proposes, the user confirms: portion steppers (½×, 1½×…), calorie override that rescales macros, "Olive isn't sure" flags, add-a-missed-item, and "leaves 340 kcal for today" before saving.                                                                                   |
 | **3. Today**                                                     | Calorie ring, macros, meal timeline, 7-day trend, streak, and **insights** ("Dinner made up 60% of the overshoot"). Olive's face summarises the day at a glance.                                                                                                                                                                |
 | **4. Health reports**                                            | Upload a PDF/photo → AI extracts values → **user verifies** → markers normalised (units, aliases) and trended. Out-of-range markers become **daily nutrient targets on Today**. This link between reports and plate is the differentiator.                                                                                      |
-| **5. Ask Olive**                                                 | A chat that knows the user: every answer is grounded in their profile, today's meals and every lab marker — rendered to text by the server, quoted by the model — so \"what does my LDL mean for dinner?\" gets _their_ LDL. Photo attachments, persisted history, data-aware opening questions, an animated orb as the way in. |
+| **5. Ask Olive**                                                 | A chat that knows the user: every answer is grounded in their profile, today's meals and every lab marker - rendered to text by the server, quoted by the model - so \"what does my LDL mean for dinner?\" gets _their_ LDL. Photo attachments, persisted history, data-aware opening questions, an animated orb as the way in. |
 
 ### What I deliberately cut
 
@@ -62,7 +62,7 @@ src/
   lib/        infrastructure: HTTP client, query cache, session, photos, error copy
 ```
 
-Looking for `services/`, `models/`, a `store/`? [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) maps every conventional layer to its folder here, traces one tap end to end, and ends with a **scaling plan** — each change paired with the signal that would trigger it. The reasoning behind the big calls (TanStack Query + Zustand rather than Redux, the shared Zod contract, feature slices, the adaptive sheet, dark-first tokens, browser smoke tests) is in [docs/adr/](docs/adr/README.md).
+Looking for `services/`, `models/`, a `store/`? [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) maps every conventional layer to its folder here, traces one tap end to end, and ends with a **scaling plan** - each change paired with the signal that would trigger it. The reasoning behind the big calls (TanStack Query + Zustand rather than Redux, the shared Zod contract, feature slices, the adaptive sheet, dark-first tokens, browser smoke tests) is in [docs/adr/](docs/adr/README.md).
 
 Server data shared by several features (the user, a day's summary) lives in `api/`, not inside one feature, so features never depend on each other for data. The few UI dependencies between features (Today opens the goal sheet and the log sheet) go through their `index.ts` and form no cycles.
 

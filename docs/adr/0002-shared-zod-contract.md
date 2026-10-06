@@ -1,4 +1,4 @@
-# 0002 — The shared Zod package is the DTO layer
+# 0002 - The shared Zod package is the DTO layer
 
 **Status:** Accepted
 
@@ -28,5 +28,5 @@ preview and the report review show the exact numbers the server will store.
 
 ## Revisit when
 
-A third consumer appears with its own release cadence — then OpenAPI-generated clients
+A third consumer appears with its own release cadence - then OpenAPI-generated clients
 earn their build step.

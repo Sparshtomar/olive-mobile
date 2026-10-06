@@ -1,5 +1,5 @@
 # Weekly dependency review: everything that changes because somebody else published
-# something, rather than because we changed something — which is why none of it gates a
+# something, rather than because we changed something - which is why none of it gates a
 # pull request.
 #
 # GitHub emails the last actor on a failed scheduled run. A red run is meant to be
@@ -9,7 +9,7 @@ name: Dependency audit
 
 on:
   schedule:
-    # Mondays, 04:00 UTC — 09:30 IST, waiting at the start of the week.
+    # Mondays, 04:00 UTC - 09:30 IST, waiting at the start of the week.
     - cron: '0 4 * * 1'
   workflow_dispatch:
 
@@ -40,7 +40,7 @@ jobs:
         run: npm run check:licenses -- --all
 
       # Informational: expo-doctor reports things that need an SDK upgrade to clear. The
-      # blocking half of what it covers — version alignment — is `expo install --check` in ci.yml.
+      # blocking half of what it covers - version alignment - is `expo install --check` in ci.yml.
       - name: expo-doctor
         if: ${{ !cancelled() }}
         continue-on-error: true

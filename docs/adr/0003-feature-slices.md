@@ -1,4 +1,4 @@
-# 0003 — Features own their screens; `ui` and `lib` are domain-free
+# 0003 - Features own their screens; `ui` and `lib` are domain-free
 
 **Status:** Accepted
 
@@ -33,7 +33,7 @@ All of it is enforced: ESLint `no-restricted-imports` for the layer rules,
 
 - A feature is one folder; the Today screen's components cannot be used by Reports
   by accident, only on purpose through an export.
-- The design system can be reasoned about — and themed — without reading any feature.
+- The design system can be reasoned about - and themed - without reading any feature.
 - Readers looking for `services/` or `models/` need the map in `docs/ARCHITECTURE.md`.
 
 ## Revisit when

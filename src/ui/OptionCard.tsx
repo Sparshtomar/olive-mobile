@@ -14,7 +14,7 @@ export interface OptionCardProps {
   onPress: () => void;
 }
 
-/** Large tappable choice with a title and explanation — for decisions that need context. */
+/** Large tappable choice with a title and explanation - for decisions that need context. */
 export const OptionCard = ({ title, hint, icon: Icon, selected, onPress }: OptionCardProps) => {
   const { colors } = useTheme();
   const styles = useStyles();

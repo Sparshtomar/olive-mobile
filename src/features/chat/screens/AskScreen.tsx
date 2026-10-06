@@ -54,7 +54,7 @@ export const AskScreen = () => {
             Ask Olive
           </Text>
           <Text tone="muted" align="center" style={{ maxWidth: 360 }}>
-            She knows your meals, your targets and every lab marker you've uploaded — ask about any of it, or send a
+            She knows your meals, your targets and every lab marker you've uploaded - ask about any of it, or send a
             photo of a plate.
           </Text>
           <Button label="New chat" icon={Plus} onPress={() => openChat('new')} />

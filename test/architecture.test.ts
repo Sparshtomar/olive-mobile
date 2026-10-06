@@ -60,7 +60,7 @@ describe('naming', () => {
     expect(files.filter((f) => /^(helpers?|utils?|misc|common|stuff)$/i.test(basename(f, extname(f))))).toEqual([]);
   });
 
-  it('has no versioned copies — change the code, or put it behind a flag', () => {
+  it('has no versioned copies - change the code, or put it behind a flag', () => {
     const segments = files.flatMap((f) => f.split('/').map((s) => s.replace(/\.tsx?$/, '')));
     expect(segments.filter((s) => /(V\d+|Old|Legacy|Copy|Backup|Deprecated)$/i.test(s))).toEqual([]);
   });

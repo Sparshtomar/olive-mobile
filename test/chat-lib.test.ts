@@ -76,7 +76,7 @@ describe('suggestions', () => {
 
   it("reflects today's situation: over target, little left, nothing logged, protein gap", () => {
     expect(suggestionsFor({ day: day(1700, 80, 3) })[0]).toMatch(/gone over/);
-    expect(suggestionsFor({ day: day(1200, 80, 2) })[0]).toBe('I have about 400 kcal left — ideas for a light dinner?');
+    expect(suggestionsFor({ day: day(1200, 80, 2) })[0]).toBe('I have about 400 kcal left - ideas for a light dinner?');
     expect(suggestionsFor({ day: day(0, 0, 0) })[0]).toMatch(/good breakfast/);
     expect(suggestionsFor({ day: day(600, 20, 1) })).toContain('How do I get 70 g more protein today?');
   });

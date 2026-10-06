@@ -33,7 +33,7 @@ export interface OliveProps {
 }
 
 /**
- * Olive — a little sprout-bean who reacts to your day. Purely decorative, so it's
+ * Olive - a little sprout-bean who reacts to your day. Purely decorative, so it's
  * hidden from screen readers; the copy next to it carries the meaning.
  */
 export const Olive = ({ mood = 'happy', size = 96, animated = true }: OliveProps) => {

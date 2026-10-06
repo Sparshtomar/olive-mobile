@@ -2,7 +2,7 @@
 # husky hooks), so in the normal case the job confirms what the author already saw. Its real
 # work is what a hook cannot cover:
 #
-#   * `npm ci` on a clean checkout — the only proof the lockfile resolves, and it cannot be
+#   * `npm ci` on a clean checkout - the only proof the lockfile resolves, and it cannot be
 #     skipped with --no-verify.
 #   * Expo SDK alignment, which needs to ask Expo what SDK 57 expects.
 #   * Diff coverage, which needs a merge-base against the PR's target branch.
@@ -10,7 +10,7 @@
 #
 # Deliberately not here: `npm audit`, the licence scan, expo-doctor. Those change when
 # somebody else publishes something, not when this PR changed something, and a gate that
-# fails for reasons the author did not cause is a gate that gets deleted. They run weekly —
+# fails for reasons the author did not cause is a gate that gets deleted. They run weekly -
 # see dependency-audit.yml.
 name: CI
 
@@ -75,7 +75,7 @@ jobs:
 
       # Were the lines THIS pull request changed covered by a test? Per-diff rather than a
       # repo-wide threshold: existing code is not the standard, new code is. See
-      # scripts/check-coverage.mjs. Skipped on a push to main — there is no PR base to diff
+      # scripts/check-coverage.mjs. Skipped on a push to main - there is no PR base to diff
       # against, and the check already ran on the PR that produced the merge.
       - name: Diff coverage
         if: ${{ !cancelled() && github.event_name == 'pull_request' }}
@@ -99,7 +99,7 @@ jobs:
 
       # Expo pins a compatible version of every expo-* package and the react-native native
       # ecosystem per SDK. A package outside that range installs and typechecks fine, then
-      # misbehaves in a native build — the one thing nothing else here can see. Retried
+      # misbehaves in a native build - the one thing nothing else here can see. Retried
       # because it queries the Expo API: a flaky network should not turn a PR red.
       - name: Expo SDK dependency versions are aligned
         run: |

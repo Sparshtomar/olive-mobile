@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { Skeleton, makeStyles, radius, space } from '@/ui';
 
-/** The Today screen in grey: date strip, summary card, then meal rows — so nothing jumps when data lands. */
+/** The Today screen in grey: date strip, summary card, then meal rows - so nothing jumps when data lands. */
 export const TodaySkeleton = () => {
   const styles = useStyles();
   return (

@@ -15,7 +15,7 @@ const STEP_FIELDS: Record<Exclude<Step, 'intro'>, (keyof ProfileInput)[]> = {
 };
 
 const REQUIRED_MESSAGE: Partial<Record<keyof ProfileInput, string>> = {
-  sex: 'Pick one — it changes the math',
+  sex: 'Pick one - it changes the math',
   activityLevel: 'Pick the closest match',
   goalType: 'Pick a goal',
 };

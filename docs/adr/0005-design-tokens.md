@@ -1,4 +1,4 @@
-# 0005 — Design tokens with a light and a dark palette; dark first
+# 0005 - Design tokens with a light and a dark palette; dark first
 
 **Status:** Accepted
 

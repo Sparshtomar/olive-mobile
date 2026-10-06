@@ -9,7 +9,7 @@ describe('onboarding validation', () => {
 
   it('asks the user to choose rather than saying "Required" for unanswered choices', () => {
     expect(validateStep('activity', {}).activityLevel).toBe('Pick the closest match');
-    expect(validateStep('body', { age: 30, heightCm: 170, weightKg: 70 }).sex).toBe('Pick one — it changes the math');
+    expect(validateStep('body', { age: 30, heightCm: 170, weightKg: 70 }).sex).toBe('Pick one - it changes the math');
   });
 
   it("uses the schema's message when a value is present but out of range", () => {

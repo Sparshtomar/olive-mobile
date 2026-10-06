@@ -1,4 +1,4 @@
-# 0001 — Server state in TanStack Query, UI state in Zustand, no Redux
+# 0001 - Server state in TanStack Query, UI state in Zustand, no Redux
 
 **Status:** Accepted
 

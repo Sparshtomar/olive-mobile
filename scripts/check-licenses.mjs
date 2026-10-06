@@ -3,7 +3,7 @@
  * Licence gate for the production dependency tree.
  *
  * Olive is distributed software (an APK people install), so a strong-copyleft package
- * anywhere in the shipped tree is an obligation on the whole binary — and npm never
+ * anywhere in the shipped tree is an obligation on the whole binary - and npm never
  * mentions it. devDependencies are out of scope: a build tool is not distributed.
  *
  * Offline and dependency-free: every installed package declares its licence in its own
@@ -126,8 +126,8 @@ const section = (title, items, note) => {
 };
 
 section(red('x Forbidden licence in the shipped tree'), findings.forbidden);
-section(yellow('! File-level copyleft — review the obligation'), findings.weak, 'advisory');
-section(yellow('! Licence string not recognised — classify it'), findings.unrecognised, 'advisory');
+section(yellow('! File-level copyleft - review the obligation'), findings.weak, 'advisory');
+section(yellow('! Licence string not recognised - classify it'), findings.unrecognised, 'advisory');
 
 if (SHOW_ALL) {
   const byLicense = new Map();

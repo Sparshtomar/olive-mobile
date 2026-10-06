@@ -87,7 +87,7 @@ export const LogSheet = () => {
           title={`Olive needs your ${mode.denied}`}
           body={
             mode.canAskAgain
-              ? `Allow ${mode.denied} access to log meals this way. Or type it — that works too.`
+              ? `Allow ${mode.denied} access to log meals this way. Or type it - that works too.`
               : `${mode.denied[0]!.toUpperCase()}${mode.denied.slice(1)} access is turned off for Olive. You can turn it on in Settings.`
           }
           action={

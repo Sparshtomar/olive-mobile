@@ -15,7 +15,7 @@ export interface ConfirmSheetProps {
   onCancel: () => void;
 }
 
-/** Confirmation for irreversible actions — a sheet on phones, a dialog on desktop. */
+/** Confirmation for irreversible actions - a sheet on phones, a dialog on desktop. */
 export const ConfirmSheet = ({
   visible,
   title,

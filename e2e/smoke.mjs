@@ -8,7 +8,7 @@
  * deployed one), so it catches what unit tests cannot: a screen that renders blank, a
  * sheet that will not open, a theme token that went transparent.
  *
- * Needs: the API on http://localhost:4010 (or API_URL), and Google Chrome installed —
+ * Needs: the API on http://localhost:4010 (or API_URL), and Google Chrome installed -
  * playwright-core drives the system browser, so there is no 300 MB browser download.
  *
  *   npm run e2e                 starts the web bundler itself, runs, stops it
@@ -101,7 +101,7 @@ async function run(scheme) {
   });
   await step('5-meal-saved', async () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    // The toast title, e.g. "Lunch logged" — anchored so "Nothing logged yet" can't match.
+    // The toast title, e.g. "Lunch logged" - anchored so "Nothing logged yet" can't match.
     await page.getByText(/^(Breakfast|Lunch|Snack|Dinner) logged$/).waitFor({ timeout: 15_000 });
   });
   await step('6-goal-sheet', async () => {

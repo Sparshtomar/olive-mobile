@@ -36,7 +36,7 @@ layer names are folders _inside_ a feature or a sibling layer, not top-level buc
   │     └─ api/meals.analyzeMeal              multipart POST; response parsed with the shared schema
   ├─ features/meals/components/MealEditor    user corrects items (features/meals/lib/portions, review)
   └─ api/meals.useCreateMeal                 POST with a client id (idempotent); invalidates day/trends/insights
-        └─ ui/Toast                          "Lunch logged · 540 kcal" — Today re-renders from the cache
+        └─ ui/Toast                          "Lunch logged · 540 kcal" - Today re-renders from the cache
 ```
 
 Every arrow crosses a boundary ESLint knows about: routes only re-export, features
@@ -62,7 +62,7 @@ tokens, no cycles) and [test/architecture.test.ts](../test/architecture.test.ts)
 
 - **Opens offline:** the query cache is persisted; last-known data renders instantly.
 - **Offline banner:** reads stay available; actions that need the network say so.
-- **Idempotent saves:** one client id per review session — a retried tap creates one meal.
+- **Idempotent saves:** one client id per review session - a retried tap creates one meal.
 - **Error boundary:** render errors land on a calm screen with a retry, not a white screen.
 - **Back-guard:** leaving an edited meal or report asks first.
 - **Bundle discipline:** per-file icon imports, per-weight fonts, on-device photo
@@ -77,7 +77,7 @@ design is the correct one.
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | Users log without signal and lose entries            | Offline **write** queue in a Zustand store with persistence; replay on reconnect; conflicts resolved by `clientId` idempotency. |
 | A second device per user                             | Real auth behind the existing `current-user` plugin; the header swap is one function in `lib/http`.                             |
-| Fixing a bug means waiting for store review          | Enable `expo-updates` (OTA) — currently off to keep the submission build deterministic.                                         |
+| Fixing a bug means waiting for store review          | Enable `expo-updates` (OTA) - currently off to keep the submission build deterministic.                                         |
 | > a few hundred users                                | Crash + analytics SDK behind one `lib/telemetry` seam; `ErrorFallback` and `lib/errors` already funnel every failure.           |
 | Logging drops off after week two                     | Push reminders tuned to each user's usual meal times (server knows them).                                                       |
 | A non-English market                                 | i18n; every string is already in components, none in `lib`.                                                                     |

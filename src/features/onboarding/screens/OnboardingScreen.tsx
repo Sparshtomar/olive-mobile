@@ -99,7 +99,7 @@ export const OnboardingScreen = () => {
                   Hi, I'm Olive
                 </Text>
                 <Text tone="muted" align="center" style={{ maxWidth: 340 }}>
-                  Snap, say or type what you eat — I'll do the counting, and connect it to what your lab reports say.
+                  Snap, say or type what you eat - I'll do the counting, and connect it to what your lab reports say.
                 </Text>
               </View>
             ) : null}
@@ -186,7 +186,7 @@ export const OnboardingScreen = () => {
 
             {step === 'activity' ? (
               <>
-                <Heading title="How active is a normal week?" subtitle="Be honest — you can change this anytime." />
+                <Heading title="How active is a normal week?" subtitle="Be honest - you can change this anytime." />
                 <ActivityPicker value={draft.activityLevel} onChange={(activityLevel) => update({ activityLevel })} />
                 {errors.activityLevel ? (
                   <Text variant="caption" tone="danger">

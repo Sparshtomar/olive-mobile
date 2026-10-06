@@ -18,7 +18,7 @@ import { useTheme } from './use-theme';
 export interface SplashOverlayProps {
   /** Called when the overlay has finished and unmounted itself from view. */
   onDone: () => void;
-  /** Fires on first layout — the moment the native splash can hide without a flash. */
+  /** Fires on first layout - the moment the native splash can hide without a flash. */
   onReady?: () => void;
 }
 
