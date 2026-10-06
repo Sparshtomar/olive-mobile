@@ -161,4 +161,4 @@ export const radius = { sm: 10, md: 14, lg: 18, xl: 24, pill: 999 } as const;
 export const WIDE_BREAKPOINT = 900;
 
 /** Bottom space phone screens leave so content clears the floating tab bar. */
-export const TAB_BAR_CLEARANCE = 96;
+export const TAB_BAR_CLEARANCE = 112;
