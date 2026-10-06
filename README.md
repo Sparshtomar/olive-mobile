@@ -34,7 +34,7 @@ Runs on **Android, iOS and the web** (desktop gets a sidebar and dialogs, phones
 
 - **Insights are rule-based, not LLM-generated.** Deterministic, unit-tested, free, and they can't hallucinate about someone's health. The engine always keeps one positive insight if there is one: a coach, not a critic.
 - **Tracked markers use one reference range per marker** (in canonical units), so a trend across two labs or mg/dL vs mmol/L stays comparable. The lab's printed range is still shown on the report.
-- **Calm, not clinical.** Cream + sage, terracotta instead of red. Being 80 kcal over is information, not failure.
+- **Calm, not clinical.** Dark, quiet surfaces with one mint accent; over-target is orange, never red. Being 80 kcal over is information, not failure.
 - **Demo users are created per tap**, not shared, so reviewers never see each other's edits.
 
 ### Edge cases handled
@@ -66,7 +66,7 @@ Server data shared by several features (the user, a day's summary) lives in `api
 - **One contract with the server:** schemas, nutrition targets and lab-marker logic come from [`@sparshtomar/olive-shared`](https://www.npmjs.com/package/@sparshtomar/olive-shared), published from the server repo. Forms validate with the same schemas the API uses, and the report review screen shows High/Low chips live while you edit values, using the exact logic the server stores.
 - **Server state:** TanStack Query, persisted to AsyncStorage. The app opens instantly with last-known data, and works read-only offline.
 - **Adaptive UI:** one `Sheet` component is a draggable bottom sheet on phones and a centred dialog on wide screens; navigation is a floating tab bar on phones and a sidebar on desktop.
-- **Light and dark themes:** the app follows the system setting. Colour tokens come in a light and a dark palette (`ui/theme.ts`), type styles live in `ui/typography.ts`, and components read the active theme through `useTheme()` and `makeStyles()`. A test keeps body text at WCAG AA contrast in both palettes.
+- **Dark-first theming:** the native app is dark; web follows the browser. Colour tokens come in a dark and a light palette (`ui/theme.ts`), type styles live in `ui/typography.ts`, and components read the active theme through `useTheme()` and `makeStyles()`. A test keeps body text at WCAG AA contrast in both palettes. Loading states are per-screen skeletons shaped like the content they stand in for, with a shimmer sweep.
 - **Bundle discipline:** icons are imported per-file (Metro doesn't tree-shake; the package root pulled ~1,500 icons), fonts per-weight, photos resized on-device before upload, APK built for arm64 with R8 + resource shrinking.
 
 ### Architecture rules (enforced, not just documented)

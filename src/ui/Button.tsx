@@ -9,7 +9,7 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const variants: Record<Variant, { bg: ColorToken | 'transparent'; fg: ColorToken; border?: ColorToken }> = {
   primary: { bg: 'primary', fg: 'textOnPrimary' },
-  secondary: { bg: 'primarySoft', fg: 'primary' },
+  secondary: { bg: 'surfaceMuted', fg: 'text' },
   ghost: { bg: 'transparent', fg: 'text', border: 'borderStrong' },
   danger: { bg: 'dangerSoft', fg: 'danger' },
 };
@@ -78,7 +78,7 @@ export const Button = ({
 const styles = StyleSheet.create({
   base: {
     borderRadius: radius.pill,
-    borderWidth: 1.5,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },

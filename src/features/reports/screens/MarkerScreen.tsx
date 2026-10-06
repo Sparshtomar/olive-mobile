@@ -7,9 +7,12 @@ import { longDate } from '@/lib/format';
 import {
   Card,
   IconButton,
+  ListGroup,
+  ListRow,
   Olive,
   Pill,
   Screen,
+  SectionHeader,
   Skeleton,
   StateView,
   Text,
@@ -129,18 +132,21 @@ export const MarkerScreen = () => {
         </Card>
       ) : null}
 
-      <View style={{ gap: space.sm }}>
-        <Text variant="overline" tone="muted">
-          Readings
-        </Text>
-        {[...trend.history].reverse().map((h) => (
-          <View key={h.reportId + h.date} style={styles.reading}>
-            <Text style={{ flex: 1 }}>{longDate(h.date)}</Text>
-            <Text variant="bodyStrong">
-              {h.value} {trend.unit}
-            </Text>
-          </View>
-        ))}
+      <View style={{ gap: space.md }}>
+        <SectionHeader title="Readings" subtitle={`${trend.history.length} from your reports`} />
+        <ListGroup>
+          {[...trend.history].reverse().map((h) => (
+            <ListRow
+              key={h.reportId + h.date}
+              title={longDate(h.date)}
+              trailing={
+                <Text variant="bodyStrong">
+                  {h.value} {trend.unit}
+                </Text>
+              }
+            />
+          ))}
+        </ListGroup>
       </View>
     </Screen>
   );
@@ -155,14 +161,5 @@ const useStyles = makeStyles(({ colors }) => ({
     alignItems: 'flex-start',
     backgroundColor: colors.tipSoft,
     borderColor: colors.tipBorder,
-  },
-  reading: {
-    flexDirection: 'row',
-    paddingVertical: space.md,
-    paddingHorizontal: space.md,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
 }));

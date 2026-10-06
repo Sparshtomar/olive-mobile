@@ -18,9 +18,7 @@ export const WeekChart = ({ trends, selected }: { trends: Trends; selected: stri
   return (
     <Card style={{ gap: space.md }}>
       <View style={styles.head}>
-        <Text variant="overline" tone="muted">
-          This week
-        </Text>
+        <Text variant="subheading">This week</Text>
         {avg !== null ? (
           <Text variant="caption" tone="muted">
             avg {kcal(avg)} kcal · target {kcal(target)}

@@ -6,8 +6,8 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
-    "backgroundColor": "#FBF7F0",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0F0F11",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sparshtomar.olive"
@@ -15,7 +15,7 @@
     "android": {
       "package": "com.sparshtomar.olive",
       "adaptiveIcon": {
-        "backgroundColor": "#FBF7F0",
+        "backgroundColor": "#0F0F11",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -58,9 +58,9 @@
         {
           "image": "./assets/splash-icon.png",
           "imageWidth": 120,
-          "backgroundColor": "#FBF7F0",
+          "backgroundColor": "#F4F4F6",
           "dark": {
-            "backgroundColor": "#171512"
+            "backgroundColor": "#0F0F11"
           }
         }
       ],

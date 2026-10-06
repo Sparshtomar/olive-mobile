@@ -55,7 +55,7 @@ const useStyles = makeStyles(({ colors }) => ({
     padding: space.lg,
     borderRadius: radius.lg,
     backgroundColor: colors.surface,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   selected: { borderColor: colors.primary, backgroundColor: colors.primaryTint },

@@ -9,6 +9,7 @@ export interface ChipProps {
   onPress?: () => void;
 }
 
+/** Outlined filter pill; selection brightens the border and text rather than filling it. */
 export const Chip = ({ label, selected, onPress }: ChipProps) => {
   const styles = useStyles();
   return (
@@ -18,7 +19,7 @@ export const Chip = ({ label, selected, onPress }: ChipProps) => {
       accessibilityState={{ selected: !!selected, checked: !!selected }}
       style={[styles.chip, selected && styles.selected]}
     >
-      <Text variant="label" tone={selected ? 'inverse' : 'default'}>
+      <Text variant="label" tone={selected ? 'default' : 'muted'}>
         {label}
       </Text>
     </PressableScale>
@@ -27,13 +28,13 @@ export const Chip = ({ label, selected, onPress }: ChipProps) => {
 
 const useStyles = makeStyles(({ colors }) => ({
   chip: {
-    paddingHorizontal: space.md + 2,
-    minHeight: 36,
+    paddingHorizontal: space.lg,
+    minHeight: 40,
     justifyContent: 'center',
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: colors.border,
   },
-  selected: { backgroundColor: colors.primary, borderColor: colors.primary },
+  selected: { backgroundColor: colors.surfaceMuted, borderColor: colors.text },
 }));

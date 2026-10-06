@@ -37,6 +37,8 @@ describe.each(Object.values(themes))('$scheme theme', ({ colors }: { colors: Col
 
 describe('alpha', () => {
   it('turns a hex token into a translucent rgba colour', () => {
-    expect(alpha(themes.light.colors.primary, 0.12)).toMatch(/^rgba\(79, 122, 90, 0\.12\)$/);
+    const hex = themes.dark.colors.primary;
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    expect(alpha(hex, 0.12)).toBe(`rgba(${r}, ${g}, ${b}, 0.12)`);
   });
 });

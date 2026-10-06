@@ -1,7 +1,7 @@
 import type { Insight, InsightTone } from '@sparshtomar/olive-shared';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Skeleton, Text, alpha, radius, space, useTheme, type ColorToken } from '@/ui';
+import { SectionHeader, Skeleton, Text, alpha, radius, space, useTheme, type ColorToken } from '@/ui';
 import { Lightbulb, Sparkles, TrendingUp, type LucideIcon } from '@/ui/icons';
 
 const TONE: Record<InsightTone, { icon: LucideIcon; bg: ColorToken; fg: ColorToken }> = {
@@ -23,9 +23,7 @@ export const InsightCards = ({ insights, loading }: { insights?: Insight[]; load
   if (!insights?.length) return null;
   return (
     <View style={{ gap: space.sm }}>
-      <Text variant="overline" tone="muted">
-        Olive noticed
-      </Text>
+      <SectionHeader title="Olive noticed" subtitle="Patterns from the last two weeks" />
       {insights.map((insight, i) => {
         const { icon: Icon, bg, fg } = TONE[insight.tone];
         return (
@@ -34,7 +32,7 @@ export const InsightCards = ({ insights, loading }: { insights?: Insight[]; load
             entering={FadeInDown.delay(i * 80)}
             style={[styles.card, { backgroundColor: colors[bg] }]}
           >
-            <View style={[styles.icon, { backgroundColor: alpha(colors.surface, 0.7) }]}>
+            <View style={[styles.icon, { backgroundColor: alpha(colors.bg, 0.35) }]}>
               <Icon size={18} color={colors[fg]} strokeWidth={2.2} />
             </View>
             <View style={{ flex: 1, gap: 2 }}>
@@ -51,6 +49,6 @@ export const InsightCards = ({ insights, loading }: { insights?: Insight[]; load
 };
 
 const styles = StyleSheet.create({
-  card: { flexDirection: 'row', gap: space.md, padding: space.lg, borderRadius: radius.lg },
+  card: { flexDirection: 'row', gap: space.md, padding: space.lg, borderRadius: radius.lg, marginTop: space.xs },
   icon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
 });

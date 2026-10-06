@@ -1,4 +1,4 @@
-import { formatRange, type MarkerTrend, type ReportSummary } from '@sparshtomar/olive-shared';
+import { formatRange, type MarkerTrend } from '@sparshtomar/olive-shared';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
@@ -8,11 +8,13 @@ import { longDate } from '@/lib/format';
 import {
   Button,
   Card,
+  ListGroup,
+  ListRow,
   Olive,
   Pill,
   PressableScale,
   Screen,
-  Skeleton,
+  SectionHeader,
   StateView,
   TAB_BAR_CLEARANCE,
   Text,
@@ -22,7 +24,8 @@ import {
   useLayout,
   useTheme,
 } from '@/ui';
-import { ChevronRight, FileText, Plus } from '@/ui/icons';
+import { FileText, Plus } from '@/ui/icons';
+import { ReportsSkeleton } from '../components/ReportsSkeleton';
 import { Sparkline } from '../components/TrendChart';
 import { UploadReportSheet } from '../components/UploadReportSheet';
 import { STATUS_LABEL, statusTone } from '../lib/status';
@@ -57,10 +60,7 @@ export const ReportsScreen = () => {
         </View>
 
         {loading ? (
-          <View style={{ gap: space.md }}>
-            <Skeleton height={96} rounded={radius.lg} />
-            <Skeleton height={96} rounded={radius.lg} />
-          </View>
+          <ReportsSkeleton />
         ) : reports.isError && !reports.data ? (
           <StateView
             art={<Olive mood="concerned" size={100} />}
@@ -84,9 +84,7 @@ export const ReportsScreen = () => {
           <>
             {markers.data && markers.data.length > 0 ? (
               <View style={{ gap: space.sm }}>
-                <Text variant="overline" tone="muted">
-                  Your markers
-                </Text>
+                <SectionHeader title="Your markers" subtitle={`${markers.data.length} tracked across your reports`} />
                 <View style={[styles.grid, isWide && { gap: space.md }]}>
                   {markers.data.map((m) => (
                     <MarkerCard key={m.key} marker={m} wide={isWide} />
@@ -96,12 +94,19 @@ export const ReportsScreen = () => {
             ) : null}
 
             <View style={{ gap: space.sm }}>
-              <Text variant="overline" tone="muted">
-                Reports
-              </Text>
-              {reports.data?.map((r) => (
-                <ReportRow key={r.id} report={r} />
-              ))}
+              <SectionHeader title="Reports" subtitle="Newest first" />
+              <ListGroup>
+                {reports.data?.map((r) => (
+                  <ListRow
+                    key={r.id}
+                    icon={FileText}
+                    title={r.title}
+                    subtitle={`${longDate(r.reportDate)} · ${r.markerCount} values${r.flaggedCount > 0 ? ` · ${r.flaggedCount} out of range` : ''}`}
+                    onPress={() => router.push(`/report/${r.id}`)}
+                    accessibilityLabel={`${r.title}, ${longDate(r.reportDate)}, ${r.flaggedCount} out of range`}
+                  />
+                ))}
+              </ListGroup>
             </View>
           </>
         )}
@@ -147,34 +152,6 @@ const MarkerCard = ({ marker, wide }: { marker: MarkerTrend; wide: boolean }) =>
   );
 };
 
-const ReportRow = ({ report }: { report: ReportSummary }) => {
-  const { colors } = useTheme();
-  const styles = useStyles();
-  return (
-    <PressableScale
-      onPress={() => router.push(`/report/${report.id}`)}
-      style={styles.reportRow}
-      scaleTo={0.98}
-      accessibilityRole="button"
-      accessibilityLabel={`${report.title}, ${longDate(report.reportDate)}, ${report.flaggedCount} out of range`}
-    >
-      <View style={styles.reportIcon}>
-        <FileText size={20} color={colors.primary} />
-      </View>
-      <View style={{ flex: 1, gap: 2 }}>
-        <Text variant="bodyStrong" numberOfLines={1}>
-          {report.title}
-        </Text>
-        <Text variant="caption" tone="muted">
-          {longDate(report.reportDate)} · {report.markerCount} values
-          {report.flaggedCount > 0 ? ` · ${report.flaggedCount} out of range` : ''}
-        </Text>
-      </View>
-      <ChevronRight size={18} color={colors.textFaint} />
-    </PressableScale>
-  );
-};
-
 const useStyles = makeStyles(({ colors }) => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   empty: { alignItems: 'center', gap: space.md, paddingVertical: space.xxl },
@@ -191,22 +168,4 @@ const useStyles = makeStyles(({ colors }) => ({
   },
   markerTop: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   markerBottom: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
-  reportRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.md,
-    padding: space.md,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  reportIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
-    backgroundColor: colors.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 }));

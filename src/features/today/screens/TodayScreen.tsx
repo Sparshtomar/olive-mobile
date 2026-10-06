@@ -12,7 +12,6 @@ import {
   IconButton,
   Olive,
   Screen,
-  Skeleton,
   StateView,
   Text,
   TAB_BAR_CLEARANCE,
@@ -30,6 +29,7 @@ import { FocusCard } from '../components/FocusCard';
 import { InsightCards } from '../components/InsightCards';
 import { MacroBars } from '../components/MacroBars';
 import { MealTimeline } from '../components/MealTimeline';
+import { TodaySkeleton } from '../components/TodaySkeleton';
 import { WeekChart } from '../components/WeekChart';
 
 /** Olive's face is a summary of the day you can read in half a second. */
@@ -98,12 +98,7 @@ export const TodayScreen = () => {
             action={{ label: 'Try again', onPress: () => void day.refetch() }}
           />
         ) : (
-          <View style={{ gap: space.lg }}>
-            <Skeleton height={56} rounded={radius.md} />
-            <Skeleton height={220} rounded={radius.lg} />
-            <Skeleton height={72} rounded={radius.lg} />
-            <Skeleton height={72} rounded={radius.lg} />
-          </View>
+          <TodaySkeleton />
         )}
       </Screen>
     );
@@ -182,9 +177,11 @@ const useStyles = makeStyles(({ colors }) => ({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: colors.warmSoft,
+    backgroundColor: colors.surfaceMuted,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: space.md,
-    height: 34,
+    height: 36,
     borderRadius: radius.pill,
   },
   hero: { gap: space.lg },
