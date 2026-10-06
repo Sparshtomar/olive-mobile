@@ -1,4 +1,5 @@
 import { MEAL_SLOTS, MEAL_SLOT_LABEL, slotForTime, type MealSlot } from '@sparshtomar/olive-shared';
+import { getRecordingPermissionsAsync, requestRecordingPermissionsAsync } from 'expo-audio';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Linking, View } from 'react-native';
@@ -24,6 +25,7 @@ import {
 import { Camera, ImageIcon, Keyboard, Mic, WifiOff, type LucideIcon } from '@/ui/icons';
 import { useLogSheet } from '../stores/log-sheet';
 import { useMealDraft } from '../stores/meal-draft';
+import { PermissionGate } from './PermissionGate';
 import { VoiceRecorder } from './VoiceRecorder';
 
 type Mode = 'choose' | 'voice' | 'text' | { denied: 'camera' | 'photos' | 'microphone'; canAskAgain: boolean };
@@ -98,11 +100,19 @@ export const LogSheet = () => {
           secondaryAction={{ label: 'Type instead', onPress: () => setMode('text') }}
         />
       ) : mode === 'voice' ? (
-        <VoiceRecorder
-          onRecorded={(uri, mimeType) => go({ kind: 'voice', uri, mimeType })}
-          onPermissionDenied={(canAskAgain) => setMode({ denied: 'microphone', canAskAgain })}
-          onCancel={() => setMode('choose')}
-        />
+        <PermissionGate
+          check={getRecordingPermissionsAsync}
+          request={requestRecordingPermissionsAsync}
+          what="your microphone"
+          reason="Olive listens while you describe your meal out loud, then works out the foods and portions. Nothing is recorded until you tap the mic."
+          onCancel={() => setMode('text')}
+        >
+          <VoiceRecorder
+            onRecorded={(uri, mimeType) => go({ kind: 'voice', uri, mimeType })}
+            onPermissionDenied={(canAskAgain) => setMode({ denied: 'microphone', canAskAgain })}
+            onCancel={() => setMode('choose')}
+          />
+        </PermissionGate>
       ) : mode === 'text' ? (
         <View style={{ gap: space.md }}>
           <Field
@@ -124,7 +134,7 @@ export const LogSheet = () => {
             ))}
           </View>
           <Button label="Analyse" size="lg" onPress={submitText} disabled={text.trim().length < 2} fullWidth />
-          <Button label="Back" variant="ghost" onPress={() => setMode('choose')} />
+          <Button label="Back" variant="ghost" size="lg" onPress={() => setMode('choose')} fullWidth />
         </View>
       ) : (
         <View style={{ gap: space.lg }}>
