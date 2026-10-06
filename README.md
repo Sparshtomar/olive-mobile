@@ -61,6 +61,8 @@ src/
   lib/        infrastructure: HTTP client, query cache, session, photos, error copy
 ```
 
+Looking for `services/`, `models/`, a `store/`? [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) maps every conventional layer to its folder here, traces one tap end to end, and ends with a **scaling plan** — each change paired with the signal that would trigger it. The reasoning behind the big calls (TanStack Query + Zustand rather than Redux, the shared Zod contract, feature slices, the adaptive sheet, dark-first tokens, browser smoke tests) is in [docs/adr/](docs/adr/README.md).
+
 Server data shared by several features (the user, a day's summary) lives in `api/`, not inside one feature, so features never depend on each other for data. The few UI dependencies between features (Today opens the goal sheet and the log sheet) go through their `index.ts` and form no cycles.
 
 - **One contract with the server:** schemas, nutrition targets and lab-marker logic come from [`@sparshtomar/olive-shared`](https://www.npmjs.com/package/@sparshtomar/olive-shared), published from the server repo. Forms validate with the same schemas the API uses, and the report review screen shows High/Low chips live while you edit values, using the exact logic the server stores.
@@ -116,9 +118,10 @@ On launch the app pings `/health`, so a sleeping free-tier server starts waking 
 ```bash
 npm test         # unit and architecture tests
 npm run check    # everything CI runs: format, lint (incl. architecture rules), types, dead code, tests
+npm run e2e      # browser smoke test: the four flows, dark and light, screenshots in e2e/screenshots/
 ```
 
-The tests cover the logic behind the review screens (portion steps, calorie override, "leaves X kcal"), onboarding validation, lab-value parsing and error copy, plus the architecture rules. UI components stay thin on top of this logic. The API's integration tests live in [olive-server](https://github.com/Sparshtomar/olive-server#tests).
+The unit tests cover the logic behind the review screens (portion steps, calorie override, "leaves X kcal"), onboarding validation, lab-value parsing and error copy, theme contrast, plus the architecture rules. UI components stay thin on top of this logic. `npm run e2e` is the user-like layer: Playwright drives the real web build through onboarding → demo data → typing and saving a meal → goal sheet → reports → a marker, in both colour schemes, against a running API (local with `AI_PROVIDER=mock`, or the deployed one via `API_URL`). It uses your installed Chrome, so there is no browser download ([ADR 0006](docs/adr/0006-browser-smoke-test.md)). The API's integration tests live in [olive-server](https://github.com/Sparshtomar/olive-server#tests).
 
 ---
 
