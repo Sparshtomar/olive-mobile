@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Browser smoke test: drives the web build through the four core flows the way a
+ * Browser smoke test: drives the web build through the core flows the way a
  * user would, in dark and light, and screenshots each step.
  *
  * This is the "user-like testing" layer above the unit suite. It runs the real app
@@ -119,6 +119,28 @@ async function run(scheme) {
       .first()
       .click();
     await page.getByText('Readings').waitFor({ timeout: 30_000 });
+  });
+  await step('9-ask-tab', async () => {
+    await page.getByLabel('Back').click();
+    await page.getByRole('tab', { name: 'Ask' }).click();
+    await page.getByText('Try asking').waitFor({ timeout: 30_000 });
+  });
+  await step('10-chat-reply', async () => {
+    await page
+      .getByRole('button', { name: /What does/ })
+      .first()
+      .click();
+    // The mock assistant always closes with its disclaimer; Gemini is told to include one per conversation.
+    await page
+      .getByText(/not a doctor/i)
+      .first()
+      .waitFor({ timeout: 60_000 });
+    await page.getByLabel('Message Olive').fill('And what about ghee?');
+    await page.getByRole('button', { name: 'Send', exact: true }).click();
+    await page
+      .getByText(/not a doctor/i)
+      .nth(1)
+      .waitFor({ timeout: 60_000 });
   });
 
   await context.close();

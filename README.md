@@ -14,14 +14,15 @@ Runs on **Android, iOS and the web** (desktop gets a sidebar and dialogs, phones
 
 **The bet.** Make logging take under 15 seconds, and make the data answer one question: _how am I doing, and what should I change?_ The full plan is in [docs/PRODUCT.md](docs/PRODUCT.md).
 
-### The four flows I built (and why these)
+### The five flows I built (and why these)
 
-| Flow                                                             | Why it's core                                                                                                                                                                                                                                 |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1. Goal setup**                                                | Every number in the app is relative to a goal. The target is shown with its math (BMR → activity → deficit) so it's never a black box, with a safety floor and a warning for aggressive paces.                                                |
-| **2. Log a meal**: photo / voice / text → AI → **review** → save | The habit loop. Most of the polish went here. AI proposes, the user confirms: portion steppers (½×, 1½×…), calorie override that rescales macros, "Olive isn't sure" flags, add-a-missed-item, and "leaves 340 kcal for today" before saving. |
-| **3. Today**                                                     | Calorie ring, macros, meal timeline, 7-day trend, streak, and **insights** ("Dinner made up 60% of the overshoot"). Olive's face summarises the day at a glance.                                                                              |
-| **4. Health reports**                                            | Upload a PDF/photo → AI extracts values → **user verifies** → markers normalised (units, aliases) and trended. Out-of-range markers become **daily nutrient targets on Today**. This link between reports and plate is the differentiator.    |
+| Flow                                                             | Why it's core                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. Goal setup**                                                | Every number in the app is relative to a goal. The target is shown with its math (BMR → activity → deficit) so it's never a black box, with a safety floor and a warning for aggressive paces.                                                                                                                                  |
+| **2. Log a meal**: photo / voice / text → AI → **review** → save | The habit loop. Most of the polish went here. AI proposes, the user confirms: portion steppers (½×, 1½×…), calorie override that rescales macros, "Olive isn't sure" flags, add-a-missed-item, and "leaves 340 kcal for today" before saving.                                                                                   |
+| **3. Today**                                                     | Calorie ring, macros, meal timeline, 7-day trend, streak, and **insights** ("Dinner made up 60% of the overshoot"). Olive's face summarises the day at a glance.                                                                                                                                                                |
+| **4. Health reports**                                            | Upload a PDF/photo → AI extracts values → **user verifies** → markers normalised (units, aliases) and trended. Out-of-range markers become **daily nutrient targets on Today**. This link between reports and plate is the differentiator.                                                                                      |
+| **5. Ask Olive**                                                 | A chat that knows the user: every answer is grounded in their profile, today's meals and every lab marker — rendered to text by the server, quoted by the model — so \"what does my LDL mean for dinner?\" gets _their_ LDL. Photo attachments, persisted history, data-aware opening questions, an animated orb as the way in. |
 
 ### What I deliberately cut
 
@@ -118,10 +119,10 @@ On launch the app pings `/health`, so a sleeping free-tier server starts waking 
 ```bash
 npm test         # unit and architecture tests
 npm run check    # everything CI runs: format, lint (incl. architecture rules), types, dead code, tests
-npm run e2e      # browser smoke test: the four flows, dark and light, screenshots in e2e/screenshots/
+npm run e2e      # browser smoke test: the core flows, dark and light, screenshots in e2e/screenshots/
 ```
 
-The unit tests cover the logic behind the review screens (portion steps, calorie override, "leaves X kcal"), onboarding validation, lab-value parsing and error copy, theme contrast, plus the architecture rules. UI components stay thin on top of this logic. `npm run e2e` is the user-like layer: Playwright drives the real web build through onboarding → demo data → typing and saving a meal → goal sheet → reports → a marker, in both colour schemes, against a running API (local with `AI_PROVIDER=mock`, or the deployed one via `API_URL`). It uses your installed Chrome, so there is no browser download ([ADR 0006](docs/adr/0006-browser-smoke-test.md)). The API's integration tests live in [olive-server](https://github.com/Sparshtomar/olive-server#tests).
+The unit tests cover the logic behind the review screens (portion steps, calorie override, "leaves X kcal"), onboarding validation, lab-value parsing and error copy, theme contrast, plus the architecture rules. UI components stay thin on top of this logic. `npm run e2e` is the user-like layer: Playwright drives the real web build through onboarding → demo data → typing and saving a meal → goal sheet → reports → a marker → asking Olive, in both colour schemes, against a running API (local with `AI_PROVIDER=mock`, or the deployed one via `API_URL`). It uses your installed Chrome, so there is no browser download ([ADR 0006](docs/adr/0006-browser-smoke-test.md)). The API's integration tests live in [olive-server](https://github.com/Sparshtomar/olive-server#tests).
 
 ---
 
