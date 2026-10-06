@@ -12,5 +12,6 @@ revisit it. A decision without a trigger is dogma.
 | 0004 | [One `Sheet`: bottom sheet on phones, dialog on desktop](0004-adaptive-sheet.md)          | Accepted |
 | 0005 | [Design tokens with a light and a dark palette; dark first](0005-design-tokens.md)        | Accepted |
 | 0006 | [User-like testing drives the web build in a real browser](0006-browser-smoke-test.md)    | Accepted |
+| 0007 | [First-run hints are declared as data next to each screen](0007-declarative-hints.md)     | Accepted |
 
 The API's decisions live in [olive-server/docs/adr](https://github.com/Sparshtomar/olive-server/tree/main/docs/adr).

@@ -3,6 +3,7 @@ import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { OliveOrb } from '@/features/chat';
+import { HintTarget } from '@/features/hints';
 import { LogSheet, useLogSheet } from '@/features/meals';
 import { haptics } from '@/lib/haptics';
 import { Button, Olive, OfflineBanner, Text, alpha, makeStyles, space, useLayout, useTheme } from '@/ui';
@@ -61,9 +62,7 @@ export const TabsLayout = () => {
       </View>
 
       {!isWide ? (
-        <View
-          style={[styles.bottomWrap, { paddingBottom: Math.max(insets.bottom, space.md), pointerEvents: 'box-none' }]}
-        >
+        <View style={[styles.bottomWrap, { paddingBottom: insets.bottom + space.md, pointerEvents: 'box-none' }]}>
           {/* Content fades out under the bar instead of showing through it. */}
           <LinearGradient
             colors={[alpha(colors.bg, 0), alpha(colors.bg, 0.9), colors.bg]}
@@ -76,10 +75,14 @@ export const TabsLayout = () => {
               <TabTrigger name="today" asChild>
                 <BottomTab icon={Sun} label="Today" />
               </TabTrigger>
-              <BottomAction label="Log a meal" onPress={openLog} />
-              <TabTrigger name="ask" asChild>
-                <BottomTab renderIcon={(focused) => <OliveOrb size={26} active={focused} />} label="Ask" />
-              </TabTrigger>
+              <HintTarget id="nav.log">
+                <BottomAction label="Log a meal" onPress={openLog} />
+              </HintTarget>
+              <HintTarget id="nav.ask">
+                <TabTrigger name="ask" asChild>
+                  <BottomTab renderIcon={(focused) => <OliveOrb size={26} active={focused} />} label="Ask" />
+                </TabTrigger>
+              </HintTarget>
               <TabTrigger name="reports" asChild>
                 <BottomTab icon={ClipboardList} label="Reports" />
               </TabTrigger>

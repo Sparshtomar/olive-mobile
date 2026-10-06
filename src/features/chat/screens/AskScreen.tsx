@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { useConversations, useDay, useDeleteConversation, useMarkers } from '@/api';
+import { HintTarget, HintTour, type HintTourSpec } from '@/features/hints';
 import { errorMessage } from '@/lib/errors';
 import { todayKey } from '@/lib/format';
 import { haptics } from '@/lib/haptics';
@@ -26,6 +27,27 @@ import { OliveOrb } from '../components/OliveOrb';
 import { SuggestionChips } from '../components/SuggestionChips';
 import { previewOf } from '../lib/markdown';
 import { suggestionsFor } from '../lib/suggestions';
+
+const TOUR: HintTourSpec = {
+  id: 'ask',
+  steps: [
+    {
+      target: 'ask.suggestions',
+      title: 'Made for your data',
+      body: 'Picked from your markers and today. Tap one to ask.',
+    },
+    {
+      target: 'ask.new',
+      title: 'Or start fresh',
+      body: 'Type anything, or attach a photo of a plate.',
+    },
+    {
+      target: 'ask.recent',
+      title: 'Chats are saved',
+      body: 'Pick any one up later. The bin deletes it.',
+    },
+  ],
+};
 
 const openChat = (id: string, q?: string) => router.push({ pathname: '/chat/[id]', params: q ? { id, q } : { id } });
 
@@ -54,22 +76,27 @@ export const AskScreen = () => {
             Ask Olive
           </Text>
           <Text tone="muted" align="center" style={{ maxWidth: 360 }}>
-            She knows your meals, your targets and every lab marker you've uploaded - ask about any of it, or send a
-            photo of a plate.
+            Ask about your meals, targets or lab markers, or send a photo of a plate.
           </Text>
-          <Button label="New chat" icon={Plus} onPress={() => openChat('new')} />
+          <HintTarget id="ask.new">
+            <Button label="New chat" icon={Plus} onPress={() => openChat('new')} />
+          </HintTarget>
         </View>
 
         <View style={{ gap: space.md }}>
           <SectionHeader title="Try asking" subtitle="Based on your reports and today" />
-          <SuggestionChips suggestions={suggestions} onPick={(q) => openChat('new', q)} />
+          <HintTarget id="ask.suggestions">
+            <SuggestionChips suggestions={suggestions} onPick={(q) => openChat('new', q)} />
+          </HintTarget>
         </View>
 
         <View style={{ gap: space.md }}>
-          <SectionHeader
-            title="Recent chats"
-            subtitle={conversations.data?.length ? `${conversations.data.length} saved` : 'Saved to your account'}
-          />
+          <HintTarget id="ask.recent">
+            <SectionHeader
+              title="Recent chats"
+              subtitle={conversations.data?.length ? `${conversations.data.length} saved` : 'Saved to your account'}
+            />
+          </HintTarget>
           {conversations.isLoading && !conversations.data ? (
             <View style={{ gap: space.sm }}>
               <Skeleton height={64} rounded={radius.lg} />
@@ -123,6 +150,7 @@ export const AskScreen = () => {
         }
         onCancel={() => setToDelete(null)}
       />
+      <HintTour tour={TOUR} />
     </>
   );
 };

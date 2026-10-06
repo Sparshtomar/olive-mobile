@@ -2,6 +2,7 @@ import { profileInputSchema, type ProfileInput, type User } from '@sparshtomar/o
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useResetProfile, useUpdateProfile } from '@/api';
+import { useHints } from '@/features/hints';
 import { errorMessage } from '@/lib/errors';
 import { haptics } from '@/lib/haptics';
 import { Button, ConfirmSheet, Field, Sheet, Text, space, toast } from '@/ui';
@@ -103,6 +104,17 @@ export const GoalSheet = ({ user, visible, onClose }: { user: User; visible: boo
             onPress={save}
             loading={update.isPending}
             disabled={!valid.success}
+            fullWidth
+          />
+          <Button
+            label="Replay the tips"
+            variant="ghost"
+            size="lg"
+            onPress={() => {
+              useHints.getState().reset();
+              toast.info('Tips will show again', 'Starting with the Today screen.');
+              onClose();
+            }}
             fullWidth
           />
           <Button

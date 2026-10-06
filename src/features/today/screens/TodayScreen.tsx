@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { useMe, useDay, useInsights, useMarkers, useTrends } from '@/api';
 import { AskOliveCard } from '@/features/chat';
 import { GoalSheet } from '@/features/goal';
+import { HintTarget, HintTour, type HintTourSpec } from '@/features/hints';
 import { useLogSheet } from '@/features/meals';
 import { describeError } from '@/lib/errors';
 import { greeting, relativeDay, todayKey } from '@/lib/format';
@@ -32,6 +33,38 @@ import { MacroBars } from '../components/MacroBars';
 import { MealTimeline } from '../components/MealTimeline';
 import { TodaySkeleton } from '../components/TodaySkeleton';
 import { WeekChart } from '../components/WeekChart';
+
+/** First-visit walkthrough. Steps whose target is not on screen are skipped automatically. */
+const TOUR: HintTourSpec = {
+  id: 'today',
+  steps: [
+    {
+      target: 'today.summary',
+      title: 'Calories left today',
+      body: 'The ring counts down from your target. Orange means over.',
+    },
+    {
+      target: 'today.strip',
+      title: 'Your week',
+      body: 'Tap a day to see what you ate.',
+    },
+    {
+      target: 'today.goal',
+      title: 'Your goal',
+      body: 'Weight, activity and pace. Change any and your target updates.',
+    },
+    {
+      target: 'nav.log',
+      title: 'Log a meal',
+      body: 'Photo, voice or text. You review it before it saves.',
+    },
+    {
+      target: 'nav.ask',
+      title: 'Ask Olive',
+      body: 'Answers from your own meals, targets and lab markers.',
+    },
+  ],
+};
 
 /** Olive's face is a summary of the day you can read in half a second. */
 const moodFor = (day: DaySummary, isToday: boolean): { mood: OliveMood; line: string } => {
@@ -84,7 +117,11 @@ export const TodayScreen = () => {
           </Text>
         </View>
       ) : null}
-      {me.data ? <IconButton icon={Target} label="Edit your goal" onPress={() => setGoalOpen(true)} /> : null}
+      {me.data ? (
+        <HintTarget id="today.goal">
+          <IconButton icon={Target} label="Edit your goal" onPress={() => setGoalOpen(true)} />
+        </HintTarget>
+      ) : null}
     </View>
   );
 
@@ -110,18 +147,20 @@ export const TodayScreen = () => {
   const { mood, line } = moodFor(d, isToday);
 
   const summary = (
-    <Card style={styles.hero}>
-      <View style={styles.heroTop}>
-        <Olive mood={mood} size={56} />
-        <Text variant="bodyStrong" style={{ flex: 1 }}>
-          {line}
-        </Text>
-      </View>
-      <View style={styles.heroBody}>
-        <CalorieRing eaten={d.totals.calories} target={d.targets.calories} />
-        <MacroBars totals={d.totals} targets={d.targets} />
-      </View>
-    </Card>
+    <HintTarget id="today.summary">
+      <Card style={styles.hero}>
+        <View style={styles.heroTop}>
+          <Olive mood={mood} size={56} />
+          <Text variant="bodyStrong" style={{ flex: 1 }}>
+            {line}
+          </Text>
+        </View>
+        <View style={styles.heroBody}>
+          <CalorieRing eaten={d.totals.calories} target={d.targets.calories} />
+          <MacroBars totals={d.totals} targets={d.targets} />
+        </View>
+      </Card>
+    </HintTarget>
   );
 
   const meals = (
@@ -150,7 +189,9 @@ export const TodayScreen = () => {
     <>
       <Screen onRefresh={refresh} refreshing={day.isRefetching} bottomInset={TAB_BAR_CLEARANCE}>
         {header}
-        <DateStrip selected={date} onSelect={setDate} days={trends.data?.days} />
+        <HintTarget id="today.strip">
+          <DateStrip selected={date} onSelect={setDate} days={trends.data?.days} />
+        </HintTarget>
         {isWide ? (
           <View style={styles.columns}>
             <View style={styles.mainCol}>
@@ -171,6 +212,7 @@ export const TodayScreen = () => {
         )}
       </Screen>
       {me.data ? <GoalSheet user={me.data} visible={goalOpen} onClose={() => setGoalOpen(false)} /> : null}
+      <HintTour tour={TOUR} />
     </>
   );
 };

@@ -89,6 +89,19 @@ async function run(scheme) {
     await page.getByRole('button', { name: 'Explore with demo data' }).click();
     await page.getByText("Today's meals").waitFor({ timeout: 30_000 });
   });
+  await step('2b-today-tips', async () => {
+    // First visit: the walkthrough spotlights the summary, the week strip, the goal, Log and Ask.
+    await page.getByRole('button', { name: 'Skip tips' }).waitFor({ timeout: 10_000 });
+    // The same button reads "Next" until the last step, where it reads "Got it".
+    for (let i = 0; i < 6; i++) {
+      const advance = page.getByRole('button', { name: /^(Next|Got it)$/ });
+      await advance.waitFor({ timeout: 5_000 });
+      const label = await advance.textContent();
+      await advance.click();
+      if (label?.trim() === 'Got it') break;
+    }
+    await page.getByRole('button', { name: 'Skip tips' }).waitFor({ state: 'detached', timeout: 5_000 });
+  });
   await step('3-log-sheet', async () => {
     await page.getByLabel('Log a meal').last().click();
     await page.getByText('Snap it').waitFor();
@@ -103,7 +116,10 @@ async function run(scheme) {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     // The toast title, e.g. "Lunch logged" - anchored so "Nothing logged yet" can't match.
     // Either toast title: "Lunch logged", or "N-day streak" when this is the first meal of the day.
-    await page.getByText(/^(?:(?:Breakfast|Lunch|Snack|Dinner) logged|\d+-day streak)/).waitFor({ timeout: 15_000 });
+    await page
+      .getByText(/^(?:(?:Breakfast|Lunch|Snack|Dinner) logged|\d+-day streak)/)
+      .first()
+      .waitFor({ timeout: 15_000 });
   });
   await step('6-goal-sheet', async () => {
     await page.getByLabel('Edit your goal').click();
@@ -113,6 +129,7 @@ async function run(scheme) {
   await step('7-reports', async () => {
     await page.getByRole('tab', { name: 'Reports' }).click();
     await page.getByText('Your markers').waitFor({ timeout: 30_000 });
+    await page.getByRole('button', { name: 'Skip tips' }).click({ timeout: 10_000 });
   });
   await step('8-marker', async () => {
     await page
@@ -125,6 +142,7 @@ async function run(scheme) {
     await page.getByLabel('Back').click();
     await page.getByRole('tab', { name: 'Ask' }).click();
     await page.getByText('Try asking').waitFor({ timeout: 30_000 });
+    await page.getByRole('button', { name: 'Skip tips' }).click({ timeout: 10_000 });
   });
   await step('10-chat-reply', async () => {
     await page

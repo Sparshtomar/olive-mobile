@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { useMarkers, useReports } from '@/api';
+import { HintTarget, HintTour, type HintTourSpec } from '@/features/hints';
 import { describeError } from '@/lib/errors';
 import { longDate } from '@/lib/format';
 import {
@@ -30,6 +31,22 @@ import { Sparkline } from '../components/TrendChart';
 import { UploadReportSheet } from '../components/UploadReportSheet';
 import { STATUS_LABEL, statusTone } from '../lib/status';
 
+const TOUR: HintTourSpec = {
+  id: 'reports',
+  steps: [
+    {
+      target: 'reports.add',
+      title: 'Add a lab report',
+      body: 'PDF or photo. Olive reads it; you confirm before it saves.',
+    },
+    {
+      target: 'reports.markers',
+      title: 'Your markers',
+      body: 'Latest value and healthy range. Tap one for history.',
+    },
+  ],
+};
+
 export const ReportsScreen = () => {
   const reports = useReports();
   const markers = useMarkers();
@@ -56,7 +73,11 @@ export const ReportsScreen = () => {
                 : 'Your lab results, tracked over time'}
             </Text>
           </View>
-          {!empty ? <Button label="Add" icon={Plus} onPress={() => setUploadOpen(true)} /> : null}
+          {!empty ? (
+            <HintTarget id="reports.add">
+              <Button label="Add" icon={Plus} onPress={() => setUploadOpen(true)} />
+            </HintTarget>
+          ) : null}
         </View>
 
         {loading ? (
@@ -78,13 +99,17 @@ export const ReportsScreen = () => {
               Upload a recent report. If something like LDL or HbA1c is out of range, Olive tracks the foods that move
               it - every day, on your Today screen.
             </Text>
-            <Button label="Add your first report" icon={Plus} size="lg" onPress={() => setUploadOpen(true)} />
+            <HintTarget id="reports.add">
+              <Button label="Add your first report" icon={Plus} size="lg" onPress={() => setUploadOpen(true)} />
+            </HintTarget>
           </Card>
         ) : (
           <>
             {markers.data && markers.data.length > 0 ? (
               <View style={{ gap: space.sm }}>
-                <SectionHeader title="Your markers" subtitle={`${markers.data.length} tracked across your reports`} />
+                <HintTarget id="reports.markers">
+                  <SectionHeader title="Your markers" subtitle={`${markers.data.length} tracked across your reports`} />
+                </HintTarget>
                 <View style={[styles.grid, isWide && { gap: space.md }]}>
                   {markers.data.map((m) => (
                     <MarkerCard key={m.key} marker={m} wide={isWide} />
@@ -112,6 +137,7 @@ export const ReportsScreen = () => {
         )}
       </Screen>
       <UploadReportSheet visible={uploadOpen} onClose={() => setUploadOpen(false)} />
+      <HintTour tour={TOUR} />
     </>
   );
 };

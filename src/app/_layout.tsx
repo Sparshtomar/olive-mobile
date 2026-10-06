@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { warmUpApi } from '@/api';
+import { useHints } from '@/features/hints';
 import { CACHE_BUSTER, queryClient, queryPersister } from '@/lib/query-client';
 import { useSession } from '@/lib/session';
 import { SplashOverlay, ToastHost, fontAssets, useTheme, type Theme } from '@/ui';
@@ -43,7 +44,10 @@ export default function RootLayout() {
   const signedIn = useSession((s) => !!s.userId);
   // The animated splash plays over the first render, then unmounts itself.
   const [introDone, setIntroDone] = useState(false);
-  const finishIntro = useCallback(() => setIntroDone(true), []);
+  const finishIntro = useCallback(() => {
+    setIntroDone(true);
+    useHints.getState().setReady();
+  }, []);
   // Hand off from the OS splash only once our own splash has painted, so there is no flash between them.
   const hideNativeSplash = useCallback(() => void SplashScreen.hideAsync(), []);
   // A font failure shouldn't brick the app - system fonts are an acceptable fallback.
