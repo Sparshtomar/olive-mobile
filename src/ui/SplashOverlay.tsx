@@ -46,11 +46,13 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
   const lift = useSharedValue(0);
 
   useEffect(() => {
-    const finish = () => scheduleOnRN(onDone);
+    // Animation callbacks run on the UI thread: hop back to JS with scheduleOnRN rather than calling a closure.
     if (reduceMotion) {
       lift.value = withDelay(
         600,
-        withTiming(1, { duration: 200 }, (done) => done && finish()),
+        withTiming(1, { duration: 200 }, (done) => {
+          if (done) scheduleOnRN(onDone);
+        }),
       );
       return;
     }
@@ -60,7 +62,9 @@ export const SplashOverlay = ({ onDone, onReady }: SplashOverlayProps) => {
     tagline.value = withDelay(TAGLINE_IN, withTiming(1, { duration: 480, easing: Easing.out(Easing.cubic) }));
     lift.value = withDelay(
       HOLD_UNTIL,
-      withTiming(1, { duration: LIFT_MS, easing: Easing.in(Easing.cubic) }, (done) => done && finish()),
+      withTiming(1, { duration: LIFT_MS, easing: Easing.in(Easing.cubic) }, (done) => {
+        if (done) scheduleOnRN(onDone);
+      }),
     );
   }, [reduceMotion, mascot, glow, wordmark, tagline, lift, onDone]);
 
