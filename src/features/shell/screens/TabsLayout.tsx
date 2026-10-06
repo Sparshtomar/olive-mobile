@@ -59,7 +59,9 @@ export const TabsLayout = () => {
 
       <View style={{ flex: 1 }}>
         <OfflineBanner />
-        <TabSlot />
+        {/* expo-router sizes the slot with flexShrink: 0. On web that lets it grow to the content, so
+            the ScrollView inside never has anything to scroll; let it shrink to the viewport instead. */}
+        <TabSlot style={styles.slot} />
       </View>
 
       {!isWide ? (
@@ -92,6 +94,7 @@ export const TabsLayout = () => {
 };
 
 const useStyles = makeStyles(({ colors, shadow }) => ({
+  slot: { flexShrink: 1, minHeight: 0 },
   sidebar: {
     width: 248,
     paddingHorizontal: space.xl,
