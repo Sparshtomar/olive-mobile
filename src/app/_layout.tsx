@@ -4,13 +4,13 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme as Navigation
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { warmUpApi } from '@/api';
 import { CACHE_BUSTER, queryClient, queryPersister } from '@/lib/query-client';
 import { useSession } from '@/lib/session';
-import { ToastHost, fontAssets, useTheme, type Theme } from '@/ui';
+import { SplashOverlay, ToastHost, fontAssets, useTheme, type Theme } from '@/ui';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -41,6 +41,11 @@ export default function RootLayout() {
   const navTheme = useMemo(() => navigationTheme(theme), [theme]);
   const hydrated = useSession((s) => s.hydrated);
   const signedIn = useSession((s) => !!s.userId);
+  // The animated splash plays over the first render, then unmounts itself.
+  const [introDone, setIntroDone] = useState(false);
+  const finishIntro = useCallback(() => setIntroDone(true), []);
+  // Hand off from the OS splash only once our own splash has painted, so there is no flash between them.
+  const hideNativeSplash = useCallback(() => void SplashScreen.hideAsync(), []);
   // A font failure shouldn't brick the app — system fonts are an acceptable fallback.
   const ready = (fontsLoaded || !!fontError) && hydrated;
 
@@ -51,10 +56,6 @@ export default function RootLayout() {
   useEffect(() => {
     void SystemUI.setBackgroundColorAsync(colors.bg);
   }, [colors.bg]);
-
-  useEffect(() => {
-    if (ready) void SplashScreen.hideAsync();
-  }, [ready]);
 
   if (!ready) return null;
 
@@ -81,6 +82,7 @@ export default function RootLayout() {
               </Stack.Protected>
             </Stack>
             <ToastHost />
+            {introDone ? null : <SplashOverlay onReady={hideNativeSplash} onDone={finishIntro} />}
           </ThemeProvider>
         </PersistQueryClientProvider>
       </SafeAreaProvider>

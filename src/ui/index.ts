@@ -19,6 +19,7 @@ export * from './SectionHeader';
 export * from './Segmented';
 export * from './Sheet';
 export * from './Skeleton';
+export * from './SplashOverlay';
 export * from './StateView';
 export * from './Text';
 export * from './theme';
