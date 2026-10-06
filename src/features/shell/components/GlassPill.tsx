@@ -1,7 +1,14 @@
+import { requireOptionalNativeModule } from 'expo';
 import { BlurView } from 'expo-blur';
 import type { ReactNode } from 'react';
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { alpha, radius, useTheme } from '@/ui';
+
+/**
+ * Blur needs expo-blur's native code. A client built before it was added (or Expo Go
+ * without it) would crash on the view, so fall back to a plain translucent pill there.
+ */
+const canBlur = Platform.OS === 'web' || requireOptionalNativeModule('ExpoBlur') !== null;
 
 /**
  * A floating pill of frosted glass: the content behind it blurs through a translucent
@@ -11,26 +18,34 @@ import { alpha, radius, useTheme } from '@/ui';
 export const GlassPill = ({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) => {
   const { colors, scheme, shadow } = useTheme();
   const dark = scheme === 'dark';
+  const fill = (
+    <View
+      style={[
+        styles.fill,
+        {
+          // Without blur the surface has to carry more of the weight.
+          backgroundColor: alpha(colors.surface, canBlur ? (dark ? 0.72 : 0.78) : 0.94),
+          borderColor: alpha(colors.text, dark ? 0.1 : 0.08),
+        },
+      ]}
+    >
+      {children}
+    </View>
+  );
   return (
     <View style={[styles.shadow, shadow.floating, style]}>
-      <BlurView
-        intensity={dark ? 45 : 70}
-        tint={dark ? 'dark' : 'light'}
-        experimentalBlurMethod="dimezisBlurView"
-        style={styles.blur}
-      >
-        <View
-          style={[
-            styles.fill,
-            {
-              backgroundColor: alpha(colors.surface, dark ? 0.72 : 0.78),
-              borderColor: alpha(colors.text, dark ? 0.1 : 0.08),
-            },
-          ]}
+      {canBlur ? (
+        <BlurView
+          intensity={dark ? 45 : 70}
+          tint={dark ? 'dark' : 'light'}
+          experimentalBlurMethod="dimezisBlurView"
+          style={styles.blur}
         >
-          {children}
-        </View>
-      </BlurView>
+          {fill}
+        </BlurView>
+      ) : (
+        <View style={styles.blur}>{fill}</View>
+      )}
     </View>
   );
 };
