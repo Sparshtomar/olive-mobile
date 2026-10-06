@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { RefreshControl, ScrollView, View, type ScrollViewProps } from 'react-native';
+import { KeyboardAvoidingView, RefreshControl, ScrollView, View, type ScrollViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { space } from './theme';
 import { useLayout } from './use-layout';
@@ -32,8 +32,9 @@ export const Screen = ({
   const { isWide } = useLayout();
   const { colors } = useTheme();
   const styles = useStyles();
+  // Edge-to-edge Android does not resize the window for the keyboard, so pad for it here on every platform.
   return (
-    <View style={styles.root}>
+    <KeyboardAvoidingView style={styles.root} behavior="padding">
       <ScrollView
         {...scrollProps}
         contentContainerStyle={[
@@ -60,7 +61,7 @@ export const Screen = ({
         <View style={[styles.inner, { maxWidth }]}>{children}</View>
       </ScrollView>
       {footer}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

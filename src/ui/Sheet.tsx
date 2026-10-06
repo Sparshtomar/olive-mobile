@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -114,10 +114,7 @@ export const Sheet = ({ visible, onClose, title, subtitle, children, dismissible
             </Animated.View>
           </View>
         ) : (
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            style={[styles.sheetWrap, { pointerEvents: 'box-none' }]}
-          >
+          <KeyboardAvoidingView behavior="padding" style={[styles.sheetWrap, { pointerEvents: 'box-none' }]}>
             <Animated.View
               style={[styles.sheet, { maxHeight: height * 0.9, paddingBottom: insets.bottom + space.lg }, sheetStyle]}
               accessibilityViewIsModal

@@ -1,6 +1,6 @@
 import { profileFieldsSchema, type ProfileInput } from '@sparshtomar/olive-shared';
 import { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, type TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, type TextInput, View } from 'react-native';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useCreateDemoUser, useCreateUser } from '@/api';
@@ -71,7 +71,7 @@ export const OnboardingScreen = () => {
   const completeProfile = profileFieldsSchema.safeParse(draft).success ? (draft as ProfileInput) : null;
 
   return (
-    <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={styles.root} behavior="padding">
       <View style={[styles.frame, { paddingTop: insets.top + space.md }, isWide && styles.frameWide]}>
         {step !== 'intro' ? (
           <View style={styles.topBar}>
